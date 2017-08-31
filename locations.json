@@ -1,0 +1,92 @@
+[{
+	"1": {
+		"name": "Ka Leo Office",
+		"address": "2445 Campus Road, Honolulu, HI, 96822",
+		"lat": 21.2985860,
+		"lng": -157.8195610,
+		"description": "Ka Leo O Hawai'i has been the student newspaper for the Manoa campus since 1922. Papers publish biweekly during the school year and monthly in the summer, but do not run on holidays, breaks or exam periods.",
+		"number": "(808) 956-7043",
+		"website": "N/A"
+	},
+	"2": {
+		"name": "Holmes Hall",
+		"address": "2540 Dole Street, Honolulu, HI, 96822",
+		"lat": 21.2968470,
+		"lng": -157.8161010,
+		"description": "Holmes Hall is home to the Mechanical Engineering, Civil Engineering, Computer Engineering, Electrical Engineering, Renewable Energy and Island Sustainability programs.",
+		"number": "N/A",
+		"website": "N/A"
+	},
+	"3": {
+		"name": "Campus Center",
+		"address": "2465 Campus Road, Honolulu, HI, 96822",
+		"lat": 21.2984350,
+		"lng": -157.8188780,
+		"description": "N/A",
+		"number": "N/A",
+		"website": "N/A"
+	},
+	"4": {
+		"name": "Hamilton Library",
+		"address": "2550 McCarthy Mall, Honolulu, HI, 96822",
+		"lat": 21.3004500,
+		"lng": -157.8161520,
+		"description": "Hamilton Library is home to the Library and Information Science (M.L.I.Sc) program. Room 002",
+		"number": "(808) 956-7321",
+		"website": "http://www.hawaii.edu/lis/"
+	},
+	"5": {
+		"name": "Sinclair Library",
+		"address": "2425 Campus Road, Honolulu, HI, 96822",
+		"lat": 21.2984860,
+		"lng": -157.8201670,
+		"description": "The Gregg M. Sinclair Library is open 24 hours a day Monday-Thursday, and has limited hours on Friday (12 a.m.-6 p.m.), Saturday (12 p.m.- 6 p.m.) and Sunday (12 p.m.- 12 a.m.). It is home to the Wong Audiovisual Center, which has separate hours of operation. See this page for Fall 2016 hours: ",
+		"number": "(808) 956-8308",
+		"website": "guides.library.manoa.hawaii.edu/sinclairlibrary"
+	},
+	"6": {
+		"name": "Pacific Ocean Science and Technology (POST)",
+		"address": "1680 East-West Road, Honolulu, HI, 96822",
+		"lat": 21.2972820,
+		"lng": -157.8164670,
+		"description": "The Pacific Ocean Science and Technology (POST) building is home to the Information and Computer  Sciences, Geology and Geophysics and Ocean Resources Engineering programs.",
+		"number": "N/A",
+		"website": "N/A"
+	},
+	"7": {
+		"name": "Marine Sciences Building",
+		"address": "1680 East-West Road, Honolulu, HI, 96822",
+		"lat": 21.2977710,
+		"lng": -157.8158330,
+		"description": "The Marine Sciences Building is home to the Global Environmental Science (B.S.) and Oceanography (M.S., Ph.D.) programs. Room 205.",
+		"number": "(808) 956-7633",
+		"website": "www.soest.hawaii.edu/oceanography"
+	},
+	"8": {
+		"name": "University Health Services",
+		"address": "1710 East West Road1710 East West Road, Honolulu, HI, 96822",
+		"lat": 21.2983360,
+		"lng": -157.8152250,
+		"description": "University Health Services Clinic Hours:",
+		"number": "(808) 956-8965",
+		"website": "http://www.hawaii.edu/shs/"
+	},
+	"9": {
+		"name": "Watanabe Hall",
+		"address": "2505 Correa Road, Honolulu, HI, 96822",
+		"lat": 21.2982710,
+		"lng": -157.8159980,
+		"description": "This building is home to the Astronomy (B.A., Minor, M.S., Ph.D.) program, whose main office is in Room 416.  ",
+		"number": "(808) 956-7091",
+		"website": "N/A"
+	},
+	"10": {
+		"name": "Hawaii Institute of Geophysics",
+		"address": "2525 Correa Road, Honolulu, HI, 96822",
+		"lat": 21.2979960,
+		"lng": -157.8167090,
+		"description": "Hawaii Institute of Geophysics (B.S., M.S., Ph.D., Minor) is home to the Atmospheric Sciences program. Room 350.",
+		"number": "(808) 956-8775",
+		"website": "www.soest.hawaii.edu/MET"
+	}
+}]
