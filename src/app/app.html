@@ -2,6 +2,7 @@
 
   <ion-content>
     <img src="../assets/images/logo.jpg">
+    <hr>
     <ion-list class="item">
       <button menuClose ion-item *ngFor="let p of pages" (click)="openPage(p)">
         <ion-icon class="menu-icon" name="{{ p.icon }}"></ion-icon>

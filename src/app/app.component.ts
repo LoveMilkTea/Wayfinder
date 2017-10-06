@@ -54,6 +54,7 @@ export class App {
 
     initializeApp() {
         const visitor = ua('UA-106620204-1');
+        visitor.pageview("/").send();
         this.platform.ready().then(() => {
             this.splashScreen.show();
             this.rootPage = MapPage;

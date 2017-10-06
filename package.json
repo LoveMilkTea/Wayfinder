@@ -50,6 +50,7 @@
         "sw-toolbox": "3.6.0",
         "underscore": "^1.8.3",
         "universal-analytics": "^0.4.15",
+        "vivus": "^0.4.2",
         "zone.js": "0.8.12"
     },
     "devDependencies": {
