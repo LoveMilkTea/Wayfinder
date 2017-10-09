@@ -1,7 +1,9 @@
 import {Component} from '@angular/core';
-import {IonicPage, NavController, NavParams, ToastController} from 'ionic-angular';
+import {IonicPage, NavController, LoadingController, Loading, AlertController, NavParams, ToastController} from 'ionic-angular';
 import {User} from "../../models/user";
 import {AngularFireAuth} from "angularfire2/auth"
+import {AuthProvider} from "../../providers/auth/auth";
+import {NgForm} from "@angular/forms";
 
 /**
  * Generated class for the LoginPage page.
@@ -18,32 +20,44 @@ import {AngularFireAuth} from "angularfire2/auth"
 export class LoginPage {
 
     user = {} as User;
+    public loading:Loading;
 
-    constructor(private afAuth: AngularFireAuth, private toast: ToastController, public navCtrl: NavController, public navParams: NavParams) {
+    constructor(public authData: AuthProvider, public alertCtrl: AlertController, private toast: ToastController, public navCtrl: NavController, public navParams: NavParams,  public loadingCtrl: LoadingController) {
     }
 
     ionViewDidLoad() {
         console.log('ionViewDidLoad LoginPage');
     }
 
-    async login(user: User) {
-        try {
-            const result = await this.afAuth.auth.signInWithEmailAndPassword(user.email, user.password);
-            if (result) {
+    login(user: User) {
+        // this is for validation
+        // if (!this.loginForm.valid){
+        //     console.log(this.loginForm.value);
+        // } else {
+        console.log(user);
+        this.authData.loginUser(user.email, user.password)
+            .then(authData => {
                 this.navCtrl.setRoot('AdminPage');
-                this.toast.create({
-                    message: `Admin Access Granted`,
-                    duration: 3000
-                }).present();
-                console.log(this.afAuth.auth.currentUser);
-            }
-        }
-        catch (e) {
-            this.toast.create({
-                message: e,
-                duration: 3000
-            }).present();
-        }
+            }, error => {
+                console.log("never");
+                this.loading.dismiss().then(() => {
+                    let alert = this.alertCtrl.create({
+                        message: `${error.message} Please try again`,
+                        buttons: [
+                            {
+                                text: "Ok",
+                                role: 'cancel'
+                            }
+                        ]
+                    });
+                    alert.present();
+                });
+            });
+        this.loading = this.loadingCtrl.create({
+            dismissOnPageChange: true,
+        });
+        this.loading.present();
     }
 
 }
+

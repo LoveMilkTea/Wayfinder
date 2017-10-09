@@ -8,6 +8,7 @@ import { LoginPage } from '../pages/login/login';
 import { ExplorePage } from "../pages/explore/explore";
 import { SubmitDataLandingPage } from '../pages/submit-data-landing/submit-data-landing';
 import { enableProdMode } from '@angular/core';
+import { AngularFireAuth } from 'angularfire2/auth';
 
 declare function require(name:string);
 const ua = require('universal-analytics');
@@ -22,10 +23,9 @@ export class App {
     @ViewChild(Nav) nav: Nav;
 
     rootPage: any;
-
     pages: Array<{title: string, icon: string, component: any}>;
 
-    constructor(public platform: Platform, public statusBar: StatusBar, public splashScreen: SplashScreen) {
+    constructor(public platform: Platform, public afAuth: AngularFireAuth, public statusBar: StatusBar, public splashScreen: SplashScreen) {
         this.initializeApp();
 
         this.pages = [
@@ -50,6 +50,16 @@ export class App {
                 component: LoginPage
             },
         ];
+
+        const authObserver = afAuth.authState.subscribe( user => {
+            if (user) {
+                console.log(user);
+                authObserver.unsubscribe();
+            } else {
+                console.log("no user");
+                authObserver.unsubscribe();
+            }
+        });
     }
 
     initializeApp() {
