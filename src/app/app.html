@@ -8,7 +8,18 @@
         <ion-icon class="menu-icon" name="{{ p.icon }}"></ion-icon>
         {{p.title}}
       </button>
+      <button menuClose ion-item  *ngIf="currentUser" (click)="logOut()">
+        <ion-icon class="menu-icon" name="person"></ion-icon>
+        Log Out
+      </button>
+      <button menuClose ion-item  *ngIf="!currentUser" (click)="logIn()">
+        <ion-icon class="menu-icon" name="person"></ion-icon>
+        Log In
+      </button>
     </ion-list>
+    <button menuClose ion-item class="user" *ngIf="currentUser">
+      {{currentUser.email}}
+    </button>
   </ion-content>
 </ion-menu>
 

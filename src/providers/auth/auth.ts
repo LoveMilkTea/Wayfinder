@@ -33,6 +33,24 @@ export class AuthProvider {
         return this.afAuth.auth.createUserWithEmailAndPassword(newEmail, newPassword);
     }
 
+    // getUserStatus(): boolean {
+    //     this.afAuth.auth.onAuthStateChanged(function(user) {
+    //         if (user) {
+    //             return true
+    //         } else {
+    //             return false
+    //         }
+    //     });
+    // }
 
+    getUser(): boolean {
+        var user = this.afAuth.auth.currentUser;
+
+        if (user) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
 }

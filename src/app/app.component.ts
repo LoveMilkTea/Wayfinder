@@ -24,6 +24,7 @@ export class App {
 
     rootPage: any;
     pages: Array<{title: string, icon: string, component: any}>;
+    currentUser: any;
 
     constructor(public platform: Platform, public afAuth: AngularFireAuth, public statusBar: StatusBar, public splashScreen: SplashScreen) {
         this.initializeApp();
@@ -44,17 +45,12 @@ export class App {
                 icon: 'send',
                 component: SubmitDataLandingPage
             },
-            {
-                title: 'User',
-                icon: 'person',
-                component: LoginPage
-            },
         ];
 
         const authObserver = afAuth.authState.subscribe( user => {
             if (user) {
-                console.log(user);
-                authObserver.unsubscribe();
+                this.currentUser = user;
+                //authObserver.unsubscribe();
             } else {
                 console.log("no user");
                 authObserver.unsubscribe();
@@ -75,6 +71,15 @@ export class App {
     openPage(page) {
         // Reset the content nav to have just this page, we wouldn't want the back button to show up in this scenario
         this.nav.setRoot(page.component);
+    }
+
+    logOut(){
+        this.afAuth.auth.signOut();
+        this.nav.setRoot(MapPage);
+    }
+
+    logIn(){
+        this.nav.setRoot(LoginPage);
     }
 
 }
