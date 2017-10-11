@@ -25,22 +25,19 @@ export class SignupPage {
 
         this.signupForm = formBuilder.group({
             email: ['', Validators.compose([Validators.required, EmailValidator.isValid])],
-            password: ['', Validators.compose([Validators.minLength(6), Validators.required])]
+            password: ['', Validators.compose([Validators.minLength(6), Validators.required])],
+            first:[],
+            last:[],
         });
     }
 
-    /**
-     * If the form is valid it will call the AuthData service to sign the user up password displaying a loading
-     *  component while the user waits.
-     *
-     * If the form is invalid it will just log the form value, feel free to handle that as you like.
-     */
     signupUser(){
         if (!this.signupForm.valid){
             console.log(this.signupForm.value);
         } else {
             this.authData.signupUser(this.signupForm.value.email, this.signupForm.value.password)
                 .then(() => {
+                    this.authData.updateUser(this.signupForm.value.first, this.signupForm.value.last);
                     this.nav.setRoot(MapPage);
                 }, (error) => {
                     this.loading.dismiss().then( () => {

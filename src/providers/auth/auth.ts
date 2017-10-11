@@ -1,22 +1,16 @@
 import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
 import 'rxjs/add/operator/map';
 import { AngularFireAuth } from 'angularfire2/auth';
 import firebase from 'firebase/app';
 
-/*
-  Generated class for the AuthProvider provider.
 
-  See https://angular.io/docs/ts/latest/guide/dependency-injection.html
-  for more info on providers and Angular DI.
-*/
 @Injectable()
 export class AuthProvider {
 
     public loginState:boolean = false;
 
-  constructor(public http: Http, public afAuth: AngularFireAuth) {
-    console.log('Hello AuthProvider Provider');
+  constructor(public afAuth: AngularFireAuth) {
+
   }
 
     loginUser(newEmail: string, newPassword: string): firebase.Promise<any> {
@@ -35,17 +29,19 @@ export class AuthProvider {
         return this.afAuth.auth.createUserWithEmailAndPassword(newEmail, newPassword);
     }
 
-    // getUserStatus(): boolean {
-    //     this.afAuth.auth.onAuthStateChanged(function(user) {
-    //         if (user) {
-    //             return true
-    //         } else {
-    //             return false
-    //         }
-    //     });
-    // }
-    setState(value: boolean){
-      this.loginState = value;
+    updateUser(newFirstName: string, newLastName: string) {
+      console.log("here");
+        var user = firebase.auth().currentUser;
+
+        user.updateProfile({
+            displayName: `${newFirstName} ${newLastName}`,
+            photoURL: "",
+        }).then(function() {
+            console.log(user);
+        }).catch(function(error) {
+            console.log("fail");
+        });
+
     }
 
     getUser(): boolean {

@@ -18,6 +18,7 @@
       </button>
     </ion-list>
     <button menuClose ion-item class="user" *ngIf="authData.loginState">
+      You are logged in as {{currentUser.displayName}}
     </button>
   </ion-content>
 </ion-menu>
