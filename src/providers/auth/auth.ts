@@ -13,6 +13,8 @@ import firebase from 'firebase/app';
 @Injectable()
 export class AuthProvider {
 
+    public loginState:boolean = false;
+
   constructor(public http: Http, public afAuth: AngularFireAuth) {
     console.log('Hello AuthProvider Provider');
   }
@@ -42,6 +44,9 @@ export class AuthProvider {
     //         }
     //     });
     // }
+    setState(value: boolean){
+      this.loginState = value;
+    }
 
     getUser(): boolean {
         var user = this.afAuth.auth.currentUser;

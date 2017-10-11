@@ -7,6 +7,7 @@ import {NgForm} from "@angular/forms";
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { EmailValidator } from '../../validators/email';
 import { SignupPage } from '../signup/signup';
+import app = firebase.app;
 
 /**
  * Generated class for the LoginPage page.
@@ -44,6 +45,7 @@ export class LoginPage {
             this.authData.loginUser(this.loginForm.value.email, this.loginForm.value.password)
                 .then(authData => {
                     this.navCtrl.setRoot('AdminPage');
+                    this.authData.loginState = true;
                 }, error => {
                     console.log("never");
                     this.loading.dismiss().then(() => {
@@ -59,6 +61,7 @@ export class LoginPage {
                         alert.present();
                     });
                 });
+
             this.loading = this.loadingCtrl.create({
                 dismissOnPageChange: true,
             });

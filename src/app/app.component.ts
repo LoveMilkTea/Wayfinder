@@ -9,6 +9,7 @@ import { ExplorePage } from "../pages/explore/explore";
 import { SubmitDataLandingPage } from '../pages/submit-data-landing/submit-data-landing';
 import { enableProdMode } from '@angular/core';
 import { AngularFireAuth } from 'angularfire2/auth';
+import { AuthProvider } from '../providers/auth/auth';
 
 declare function require(name:string);
 const ua = require('universal-analytics');
@@ -26,7 +27,7 @@ export class App {
     pages: Array<{title: string, icon: string, component: any}>;
     currentUser: any;
 
-    constructor(public platform: Platform, public afAuth: AngularFireAuth, public statusBar: StatusBar, public splashScreen: SplashScreen) {
+    constructor(public platform: Platform, public afAuth: AngularFireAuth, public statusBar: StatusBar, public splashScreen: SplashScreen, public authData: AuthProvider) {
         this.initializeApp();
 
         this.pages = [
@@ -46,13 +47,10 @@ export class App {
                 component: SubmitDataLandingPage
             },
         ];
-
         const authObserver = afAuth.authState.subscribe( user => {
             if (user) {
                 this.currentUser = user;
-                //authObserver.unsubscribe();
             } else {
-                console.log("no user");
                 authObserver.unsubscribe();
             }
         });
@@ -74,6 +72,7 @@ export class App {
     }
 
     logOut(){
+        this.authData.loginState = false;
         this.afAuth.auth.signOut();
         this.nav.setRoot(MapPage);
     }
