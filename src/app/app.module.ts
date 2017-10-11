@@ -19,6 +19,7 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { SubmitDataLandingPage } from "../pages/submit-data-landing/submit-data-landing";
 
 import { Geolocation } from '@ionic-native/geolocation';
+import { AuthProvider } from '../providers/auth/auth';
 
 @NgModule({
     declarations: [
@@ -56,7 +57,8 @@ import { Geolocation } from '@ionic-native/geolocation';
         {
             provide: ErrorHandler,
             useClass: IonicErrorHandler
-        }
+        },
+        AuthProvider,
     ]
 })
 export class AppModule {}

@@ -8,6 +8,8 @@ import { LoginPage } from '../pages/login/login';
 import { ExplorePage } from "../pages/explore/explore";
 import { SubmitDataLandingPage } from '../pages/submit-data-landing/submit-data-landing';
 import { enableProdMode } from '@angular/core';
+import { AngularFireAuth } from 'angularfire2/auth';
+import { AuthProvider } from '../providers/auth/auth';
 
 declare function require(name:string);
 const ua = require('universal-analytics');
@@ -22,10 +24,10 @@ export class App {
     @ViewChild(Nav) nav: Nav;
 
     rootPage: any;
-
     pages: Array<{title: string, icon: string, component: any}>;
+    currentUser: any;
 
-    constructor(public platform: Platform, public statusBar: StatusBar, public splashScreen: SplashScreen) {
+    constructor(public platform: Platform, public afAuth: AngularFireAuth, public statusBar: StatusBar, public splashScreen: SplashScreen, public authData: AuthProvider) {
         this.initializeApp();
 
         this.pages = [
@@ -44,12 +46,14 @@ export class App {
                 icon: 'send',
                 component: SubmitDataLandingPage
             },
-            {
-                title: 'User',
-                icon: 'person',
-                component: LoginPage
-            },
         ];
+        const authObserver = afAuth.authState.subscribe( user => {
+            if (user) {
+                this.currentUser = user;
+            } else {
+                authObserver.unsubscribe();
+            }
+        });
     }
 
     initializeApp() {
@@ -65,6 +69,16 @@ export class App {
     openPage(page) {
         // Reset the content nav to have just this page, we wouldn't want the back button to show up in this scenario
         this.nav.setRoot(page.component);
+    }
+
+    logOut(){
+        this.authData.loginState = false;
+        this.afAuth.auth.signOut();
+        this.nav.setRoot(MapPage);
+    }
+
+    logIn(){
+        this.nav.setRoot(LoginPage);
     }
 
 }
