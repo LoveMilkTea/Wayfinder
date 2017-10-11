@@ -58,7 +58,7 @@ import { AuthProvider } from '../providers/auth/auth';
             provide: ErrorHandler,
             useClass: IonicErrorHandler
         },
-    AuthProvider
+        AuthProvider,
     ]
 })
 export class AppModule {}

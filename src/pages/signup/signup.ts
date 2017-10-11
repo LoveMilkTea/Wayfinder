@@ -32,12 +32,16 @@ export class SignupPage {
     }
 
     signupUser(){
+        var data = {email: `${this.signupForm.value.email}`,
+                    photoURL: "",
+                    displayName: `${this.signupForm.value.first} ${this.signupForm.value.last}`};
         if (!this.signupForm.valid){
             console.log(this.signupForm.value);
         } else {
             this.authData.signupUser(this.signupForm.value.email, this.signupForm.value.password)
                 .then(() => {
-                    this.authData.updateUser(this.signupForm.value.first, this.signupForm.value.last);
+                    this.authData.createUser(this.signupForm.value.first, this.signupForm.value.last);
+                    this.authData.loginUser(this.signupForm.value.email, this.signupForm.value.password);
                     this.nav.setRoot(MapPage);
                 }, (error) => {
                     this.loading.dismiss().then( () => {
