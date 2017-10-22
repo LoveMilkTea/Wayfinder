@@ -33,7 +33,7 @@
       <ion-card *ngFor="let comment of comments">
         <ion-card-header>
           <ion-item>
-            <ion-icon name="person"> Anonymous</ion-icon>
+            <ion-icon name="person"> {{ comment.userName }} </ion-icon>
           </ion-item>
         </ion-card-header>
 
@@ -60,9 +60,14 @@
     </form>
   </div>
 
-  <div style="display: flex;">
+  <div *ngIf="user" style="display: flex;">
     <button style="margin: auto;" ion-button (click)="toggleAddButton()">
       Comment
+    </button>
+  </div>
+  <div *ngIf="!user" style="display: flex;">
+    <button style="margin: auto;" ion-button (click)="logIn()">
+      Log in to comment
     </button>
   </div>
 </ion-content>
