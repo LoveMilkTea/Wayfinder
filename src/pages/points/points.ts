@@ -5,6 +5,8 @@ import { NgForm } from '@angular/forms';
 import { FIREBASE_CONFIG } from "./../../app.firebase.config";
 import * as firebase from 'firebase';
 import * as _ from 'underscore/underscore';
+import {AuthProvider} from "../../providers/auth/auth";
+import { LoginPage } from '../login/login';
 
 
 @IonicPage()
@@ -27,8 +29,9 @@ export class PointsPage {
     image: any;
     date: any;
     showAdd: any;
+    user: any;
 
-    constructor(public navCtrl: NavController, public navParams: NavParams, public loading: LoadingController, private toast: ToastController) {
+    constructor(public navCtrl: NavController, public navParams: NavParams, public loading: LoadingController, private toast: ToastController, public authData: AuthProvider) {
         if (!firebase.apps.length) {
             this.App = firebase.initializeApp(FIREBASE_CONFIG);
         } else {
@@ -52,7 +55,8 @@ export class PointsPage {
         }
         this.date = new Date();
         this.showAdd = false;
-    }
+        this.user = this.authData.getUserRole();
+        console.log(this.user);}
 
     ionViewDidLoad() {
       this.showComments();
@@ -71,7 +75,7 @@ export class PointsPage {
     addComments(formData: NgForm){
         this.date = new Date().toString();
         Object.assign(formData.value, {'dateTime': this.date});
-
+        Object.assign(formData.value, {'userName': this.user.displayName});
         let comments = this.ref.child(this.key);
         comments.child('/comments').push(formData.value);
         this.showComments();
@@ -83,6 +87,9 @@ export class PointsPage {
     }
     getDate(comment: any) {
         return new Date(comment.dateTime).getMonth() + 1 + '/' + new Date(comment.dateTime).getDate() + '/' + new Date(comment.dateTime).getFullYear()
+    }
+    logIn(){
+        this.navCtrl.push(LoginPage);
     }
 
 }
