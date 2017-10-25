@@ -321,11 +321,13 @@ export class MapPage {
             this.searchingStart = true;
         }
         else {
+            console.log("hi");
             this.clearRoute();
             if (this.infoWindow) {
                 this.infoWindow.close();
                 this.clearStarterMarker();
             }
+            this.clearDirectionsIcons(this.startMarker, this.endMarker);
             this.isInfoWindowOpen = false;
             this.inRoute = false;
             this.searchingStart = false;
@@ -344,13 +346,13 @@ export class MapPage {
     directFromCurrentLocation() {
         this.searchingStart = false;
 
-        /*let renderOptions = {
+        let renderOptions = {
             map: this.map,
             suppressMarkers: true
-        }*/
+        }
 
         this.directionsService = new google.maps.DirectionsService;
-        this.directionsDisplay = new google.maps.DirectionsRenderer;
+        this.directionsDisplay = new google.maps.DirectionsRenderer(renderOptions);
         this.directionsDisplay.setMap(this.map);
 
         let origin = this.latLng;
@@ -362,25 +364,23 @@ export class MapPage {
         }, (response, status) => {
             if (status === 'OK') {
                 this.directionsDisplay.setDirections(response);
-                //this.placeDirectionsIcons(response, -1, this.endValueIndex);
+                this.placeDirectionsIcons(response, -1, this.endValueIndex);
             } else {
                 window.alert('Directions request failed due to ' + status);
             }
         });
-
-
     }
 
     directFromLocation(location) {
         this.searchingStart = false;
 
-        /*let renderOptions = {
+        let renderOptions = {
             map: this.map,
             suppressMarkers: true
-        }*/
+        }
 
         this.directionsService = new google.maps.DirectionsService;
-        this.directionsDisplay = new google.maps.DirectionsRenderer;
+        this.directionsDisplay = new google.maps.DirectionsRenderer(renderOptions);
         this.directionsDisplay.setMap(this.map);
 
         let origin = {lat: location.lat, lng: location.lng};
@@ -392,7 +392,7 @@ export class MapPage {
         }, (response, status) => {
             if (status === 'OK') {
                 this.directionsDisplay.setDirections(response);
-                //this.placeDirectionsIcons(response, location.key, this.endValueIndex);
+                this.placeDirectionsIcons(response, location.key, this.endValueIndex);
             } else {
                 window.alert('Directions request failed due to ' + status);
             }
@@ -416,6 +416,14 @@ export class MapPage {
             icon: this.icons[this.geoMarkers[endIndex - 1].type]
         })
         //this.trackLocation();
+    }
+
+
+    clearDirectionsIcons(startMarker, endMarker) {
+        endMarker.setMap(null);
+        if (!isNullOrUndefined(startMarker)) {
+            startMarker.setMap(null);
+        }
     }
 
     // Could be useful if needed.
