@@ -55,7 +55,7 @@ export class PointsPage {
         }
         this.date = new Date();
         this.showAdd = false;
-        this.user = this.authData.getUserRole();
+        this.user = firebase.auth().currentUser;
         }
 
     ionViewDidLoad() {

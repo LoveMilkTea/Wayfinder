@@ -20,6 +20,7 @@ export class AuthProvider {
     App: any;
     db: any;
     roles: String[];
+    currentUser: any;
 
   constructor(public afAuth: AngularFireAuth) {
       if (!firebase.apps.length) {
@@ -29,6 +30,9 @@ export class AuthProvider {
       }
       this.db = this.App.database();
       this.ref = this.db.ref("users");
+      afAuth.authState.subscribe((user: firebase.User) => {
+          this.currentUser = user;
+      })
   }
 
     loginUser(newEmail: string, newPassword: string): firebase.Promise<any> {
@@ -48,23 +52,20 @@ export class AuthProvider {
     }
 
     createUser(newFirstName: string, newLastName: string) {
-
+        let user = firebase.auth().currentUser;
         //updating the firebase default user accounts
-        var user = firebase.auth().currentUser;
-        user.updateProfile({
-            displayName: `${newFirstName} ${newLastName}`,
-            photoURL: "",
-        }).then(() => {
-            //creates an entry in the user db with the same uid as the authenticated account
-            const userData = new User(user);
-            this.db.ref("users").child(user.uid).set(userData);
-        }).catch(function(error) {
-            console.log(error);
-        });
+        if(user) {
+            user.updateProfile({
+                displayName: `${newFirstName} ${newLastName}`,
+                photoURL: "",
+            }).then(() => {
+                //creates an entry in the user db with the same uid as the authenticated account
+                const userData = new User(user, newFirstName, newLastName);
+                this.db.ref("users").child(user.uid).set(userData);
+            }).catch(function (error) {
+                console.log(error);
+            });
+        }
 
-    }
-    getUserRole() {
-        var user = firebase.auth().currentUser;
-        return user;
     }
 }

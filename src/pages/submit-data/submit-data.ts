@@ -7,6 +7,7 @@ import * as firebase from 'firebase';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Http } from '@angular/http';
 import { MapPage } from "../map/map";
+import {AuthProvider} from "../../providers/auth/auth";
 
 @Component({
     selector: 'submit-page',
@@ -24,8 +25,12 @@ export class SubmitDataPage {
     url: any;
     address: any;
     token: any;
+    user: any;
+    firstName: any;
+    lastName: any;
+    email: any;
 
-    constructor(public navCtrl: NavController, public navParams: NavParams, public loading: LoadingController, private toast: ToastController, public http: Http) {
+    constructor(public navCtrl: NavController, public navParams: NavParams, public loading: LoadingController, private toast: ToastController, public http: Http, public authData: AuthProvider) {
         if (!firebase.apps.length) {
             this.App = firebase.initializeApp(FIREBASE_CONFIG);
         } else {
@@ -38,6 +43,12 @@ export class SubmitDataPage {
             this.latitude = this.navParams.get('lat');
             this.longitude = this.navParams.get('long');
             this.address = this.navParams.get('address');
+        }
+        this.user = firebase.auth().currentUser;
+        if(this.user){
+            this.firstName = this.user.firstName;
+            this.lastName = this.user.lastName;
+            this.email = this.user.email;
         }
     }
 
