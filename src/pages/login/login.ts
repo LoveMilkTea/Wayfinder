@@ -47,17 +47,20 @@ export class LoginPage {
             console.log(this.loginForm.value);
         } else {
             this.authData.loginUser(this.loginForm.value.email, this.loginForm.value.password)
-                .then(authData => {
+                .then( () => {
                     this.authData.loginState = true;
-                    var user = this.authData.getUserRole();
-                     var uid = user.uid;
+                     let user = firebase.auth().currentUser;
+                    let uid = user.uid;
                      this.ref.once("value", (snapshot)=> {
-                             var temp = snapshot.val()[uid].roles;
-                             if(temp.admin === true){
+                         if(snapshot.val()[uid].roles) {
+                             let temp = snapshot.val()[uid].roles;
+                             console.log(temp);
+                             if (temp.admin === true) {
                                  this.navCtrl.setRoot('AdminPage');
-                             }else{
+                             } else {
                                  this.navCtrl.setRoot(MapPage);
                              }
+                         }
                          });
                 }, error => {
                     console.log("never");
