@@ -47,14 +47,6 @@ export class App {
                 component: SubmitDataLandingPage
             },
         ];
-        // const authObserver = afAuth.authState.subscribe( user => {
-        //     if (user) {
-        //         this.currentUser = user;
-        //         console.log(this.currentUser);
-        //     } else {
-        //         authObserver.unsubscribe();
-        //     }
-        // });
             this.afAuth.authState.subscribe(auth => this.currentUser = auth);// user info is inside auth object
     }
 

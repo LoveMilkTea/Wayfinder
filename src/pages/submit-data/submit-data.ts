@@ -4,7 +4,6 @@ import { LoadingController } from 'ionic-angular';
 import { NgForm } from '@angular/forms';
 import { FIREBASE_CONFIG } from "./../../app.firebase.config";
 import * as firebase from 'firebase';
-import { FormBuilder, FormGroup } from '@angular/forms';
 import { Http } from '@angular/http';
 import { MapPage } from "../map/map";
 import {AuthProvider} from "../../providers/auth/auth";
@@ -15,7 +14,6 @@ import {AuthProvider} from "../../providers/auth/auth";
 })
 
 export class SubmitDataPage {
-    ref: any;
     childRef: any;
     App: any;
     db: any;
@@ -37,7 +35,6 @@ export class SubmitDataPage {
             this.App = firebase.app();
         }
         this.db = this.App.database();
-        this.ref = this.db.ref("dataPoints");
         this.token = this.navParams.get('token');
         if(!this.token) {
             this.latitude = this.navParams.get('lat');
@@ -46,9 +43,14 @@ export class SubmitDataPage {
         }
         this.user = firebase.auth().currentUser;
         if(this.user){
-            this.firstName = this.user.firstName;
-            this.lastName = this.user.lastName;
             this.email = this.user.email;
+            let uid = this.user.uid;
+            this.db.ref("users").once("value", (snapshot)=> {
+                if(snapshot.val()[uid]) {
+                    this.firstName = snapshot.val()[uid].firstName;
+                    this.lastName = snapshot.val()[uid].lastName;
+                }
+            });
         }
     }
 
@@ -64,7 +66,7 @@ export class SubmitDataPage {
             }
         }
         Object.assign(formData.value, {'status': 'pending'});
-        this.childRef = this.ref.push();
+        this.childRef = this.db.ref("dataPoints").push();
         this.childRef.set(formData.value);
         this.toast.create({
             message: `Your point has been submitted! Wait for admin approval.`,
