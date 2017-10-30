@@ -68,4 +68,19 @@ export class AuthProvider {
         }
 
     }
+
+    //currently not working because of async, need to fix
+    getUserRoles(){
+        let user = firebase.auth().currentUser;
+        let uid = user.uid;
+        let roles = {}
+        this.ref.once("value", (snapshot)=> {
+            if(snapshot.val()[uid].roles) {
+                let temp = snapshot.val()[uid].roles;
+               // let roles = {admin: temp.admin ? true: false};
+                roles = temp
+            }
+        });
+        return roles;
+    }
 }

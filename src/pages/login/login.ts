@@ -20,7 +20,6 @@ export class LoginPage {
     user = {} as User;
     loginForm:FormGroup;
     public loading:Loading;
-    ref: any;
     App: any;
     db: any;
 
@@ -35,7 +34,6 @@ export class LoginPage {
             this.App = firebase.app();
         }
         this.db = this.App.database();
-        this.ref = this.db.ref("users");
     }
 
     ionViewDidLoad() {
@@ -51,10 +49,9 @@ export class LoginPage {
                     this.authData.loginState = true;
                      let user = firebase.auth().currentUser;
                     let uid = user.uid;
-                     this.ref.once("value", (snapshot)=> {
+                    this.db.ref("users").once("value", (snapshot)=> {
                          if(snapshot.val()[uid].roles) {
                              let temp = snapshot.val()[uid].roles;
-                             console.log(temp);
                              if (temp.admin === true) {
                                  this.navCtrl.setRoot('AdminPage');
                              } else {
@@ -63,7 +60,6 @@ export class LoginPage {
                          }
                          });
                 }, error => {
-                    console.log("never");
                     this.loading.dismiss().then(() => {
                         let alert = this.alertCtrl.create({
                             message: `${error.message} Please try again`,
