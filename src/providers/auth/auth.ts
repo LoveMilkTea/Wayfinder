@@ -67,6 +67,13 @@ export class AuthProvider {
             });
         }
 
+        user.sendEmailVerification().then(function() {
+            console.log("work?");
+        }).catch(function(error) {
+            console.log(error);
+            console.log("fail");
+        });
+
     }
 
     //currently not working because of async, need to fix
