@@ -5,6 +5,7 @@ import {AuthProvider} from "../../providers/auth/auth";
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {EmailValidator} from '../../validators/email';
 import {SignupPage} from '../signup/signup';
+import {ResetPasswordPage} from '../reset-password/reset-password';
 import app = firebase.app;
 import {MapPage} from "../map/map";
 import {FIREBASE_CONFIG} from "./../../app.firebase.config";
@@ -99,6 +100,10 @@ export class LoginPage {
     }
     createAccount() {
         this.navCtrl.push('SignupPage');
+    }
+
+    goToResetPassword() {
+        this.navCtrl.push('ResetPasswordPage');
     }
 }
 
