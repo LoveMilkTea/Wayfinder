@@ -111,7 +111,7 @@ export class ExplorePage {
     }
 
     private hideLoading(){
-        this.loader.dismiss();
+        this.loader.dismiss().catch(() => {});
     }
 
 }
