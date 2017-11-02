@@ -10,6 +10,7 @@ import { Geolocation } from '@ionic-native/geolocation';
 
 declare var google;
 let stash = []; // Array to contain Markers on the map
+let timedStash = [];
 
 @Component({
     selector: 'page-map',
@@ -96,6 +97,7 @@ export class MapPage {
         this.loadTagData(); // Load all the data from firebase once
         this.loadMap();
         this.getLatLng();
+        this.placeTimedMarker();
     }
 
     searchPoints(input) {
@@ -592,9 +594,32 @@ export class MapPage {
         return infoContent;
     }
 
-    placeAllMarkers() {
+    placeTimedMarker() {
+        var uh = {lat: 21.3159, lng: 157.8033};
+        this.marker = new google.maps.Marker({
+            position: uh,
+            map: this.map,
+            animation: google.maps.Animation.BOUNCE
+        });
+        timedStash.push(this.marker);
 
+        setTimeout(function () {
+            if (timedStash) {
+                for (let i = 0; i < timedStash.length; i++) {
+                    timedStash[i].setMap(null);
+                }
+                timedStash.length = 0;
+                this.changeIcon = false;
+            } else {
+                console.log('Stash array does not exist!');
+            }
+        }, 2000);
+        }
+
+
+    placeAllMarkers() {
         this.clearAllMarkers();
+        this.placeTimedMarker();
         this.infoWindow = new google.maps.InfoWindow();
 
         for (let i = 0, length = this.geoMarkers.length; i < length; i++) {
@@ -634,6 +659,18 @@ export class MapPage {
             this.map.setCenter({lat: 21.2969, lng: -157.8171});
             this.map.setZoom(15);
         }
+        setTimeout(function () {
+            if (stash) {
+                for (let i = 0; i < stash.length; i++) {
+                    stash[i].setMap(null);
+                }
+                stash.length = 0;
+                this.changeIcon = false;
+            } else {
+                console.log('Stash array does not exist!');
+            }
+            // Markers disappear after 200000 seconds (proof of concept for timed events
+        }, 200000);
     }
 
 
@@ -680,6 +717,7 @@ export class MapPage {
             this.map.setZoom(17);
         }
     }
+
 
     // Use HTML5 Geolocation to track lat/lng
     trackLocation() {
