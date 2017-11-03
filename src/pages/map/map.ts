@@ -588,7 +588,7 @@ export class MapPage {
                 location.address = '';
             }
             else {
-                infoContent += '<div id="windowAddress"><span style="font-weight: bold">Address: </span>' + location.address + '</div>'
+                infoContent += '<div id="windowAddress"><span style="font-weight: bold; color: #259975;">Address: </span>' + location.address + '</div>'
             }
         }
         if (location.number) {
@@ -596,7 +596,7 @@ export class MapPage {
                 location.number = '';
             }
             else {
-                infoContent += '<div id="windowPhone"><span style="font-weight: bold">Phone: </span>' + location.number + '</div>'
+                infoContent += '<div id="windowPhone"><span style="font-weight: bold; color: #259975;">Phone: </span>' + location.number + '</div>'
             }
         }
         infoContent += '<i id="infoIcon">' + '&#9432;' + '</i>';
@@ -630,7 +630,7 @@ export class MapPage {
 
     placeAllMarkers() {
         this.clearAllMarkers();
-        
+
         this.infoWindow = new google.maps.InfoWindow({
             maxWidth: 350
         });
