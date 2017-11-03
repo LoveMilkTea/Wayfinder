@@ -124,25 +124,36 @@ page-map {
     box-shadow: 0px 5px 10px 5px rgba(1,1,1,0.2);
   }
 
+  .windowContainer {
+    padding-left: 25px;
+  }
+
   #windowHead {
     margin-top: 3%;
     color: black;
     font-weight: bold;
     font-size: 130%;
+    text-align: center;
+    padding-bottom: 10px;
   }
 
-  #addressTitle {
-    font-weight: bold;
-    margin-top: 3%;
+  #windowDesc {
+    margin-top: 10px;
+    font-weight: 450;
   }
 
-  #phoneTitle {
-    font-weight: bold;
+  #windowAddress {
+    margin-top: 7px;
+  }
+
+  #windowPhone {
+    margin-top: 5px;
   }
 
   .ui.fluid.image.info {
     width: 100%;
     height: 50%;
+    box-shadow: 3px 3px 2px #ccc;
   }
 
   .tagButton {
@@ -173,10 +184,12 @@ page-map {
   .ui.grid {
     #infoIcon {
       cursor: pointer;
-      color: #18A885;
+      color: #259975;
       font-style: normal;
       text-decoration: none;
-      margin-top: 3%;
+      text-align: right;
+      font-size: 17px;
+      font-weight: bold;
     }
 
     width: fluid;

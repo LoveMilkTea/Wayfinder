@@ -192,6 +192,7 @@ export class MapPage {
         let info = this.getInfoWindowData(location);
         this.infoWindow = new google.maps.InfoWindow({
             content: info,
+            maxWidth: 350
         });
         google.maps.event.addListener(this.infoWindow, 'domready', (() => {
             document.getElementById("infoIcon").addEventListener("click", () => {
@@ -232,6 +233,7 @@ export class MapPage {
         let info = this.getInfoWindowData(location);
         this.infoWindow = new google.maps.InfoWindow({
             content: info,
+            maxWidth: 350
         });
         this.infoWindow.open(this.map, this.marker);
         this.isInfoWindowOpen = true;
@@ -471,7 +473,9 @@ export class MapPage {
         this.clearAllMarkers();
         this.changeIcon = true;
 
-        this.infoWindow = new google.maps.InfoWindow();
+        this.infoWindow = new google.maps.InfoWindow({
+            maxWidth: 350
+        });
 
         for (let i = 0, length = this.geoMarkers.length; i < length; i++) {
             let data = this.geoMarkers[i],
@@ -548,8 +552,15 @@ export class MapPage {
     }
 
     getInfoWindowData(location) {
+        console.log(location);
         let imgSrc;
-        let infoContent = '<div class="ui grid">';
+        let infoContent = '<div class="ui grid windowContainer">';
+        if (location.name) {
+            if (location.name.toLowerCase() == 'n/a') {
+                location.name = '';
+            }
+            infoContent += '<div id="windowHead">' + location.name + '</div>'
+        }
         if (location.key) {
             if (location.key > 163) {
                 imgSrc = "../../assets/images/uhLogo.jpg";
@@ -562,29 +573,29 @@ export class MapPage {
             }
             infoContent += '<img class="ui fluid image info" src="' + imgSrc + '">'
         }
-        if (location.name) {
-            if (location.name.toLowerCase() == 'n/a') {
-                location.name = '';
-            }
-            infoContent += '<div id="windowHead">' + location.name + '</div>'
-        }
         if (location.description) {
             if (location.description.toLowerCase() == 'n/a') {
                 location.description = '';
             }
-            infoContent += '<div id="description">' + location.description + '</div>'
+            else {
+                infoContent += '<div id="windowDesc">' + location.description + '</div>'
+            }
         }
         if (location.address) {
             if (location.address.toLowerCase() == 'n/a') {
                 location.address = '';
             }
-            infoContent += '<div id="addressTitle">Address: ' + location.address + '</div>'
+            else {
+                infoContent += '<div id="windowAddress"><span style="font-weight: bold">Address: </span>' + location.address + '</div>'
+            }
         }
         if (location.number) {
             if (location.number.toString().toLowerCase() == 'n/a') {
                 location.number = '';
             }
-            infoContent += '<div id="phoneTitle">Phone: ' + location.number + '</div>';
+            else {
+                infoContent += '<div id="windowPhone"><span style="font-weight: bold">Phone: </span>' + location.number + '</div>'
+            }
         }
         infoContent += '<i id="infoIcon">' + '&#9432;' + '</i>';
         infoContent += '</div>';
@@ -595,7 +606,9 @@ export class MapPage {
     placeAllMarkers() {
 
         this.clearAllMarkers();
-        this.infoWindow = new google.maps.InfoWindow();
+        this.infoWindow = new google.maps.InfoWindow({
+            maxWidth: 350
+        });
 
         for (let i = 0, length = this.geoMarkers.length; i < length; i++) {
             let data = this.geoMarkers[i],
