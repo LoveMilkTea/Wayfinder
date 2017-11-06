@@ -20,6 +20,7 @@ import { SubmitDataLandingPage } from "../pages/submit-data-landing/submit-data-
 
 import { Geolocation } from '@ionic-native/geolocation';
 import { AuthProvider } from '../providers/auth/auth';
+import { DistanceMatrixService } from "../services/distanceMatrixService/distanceMatrixService";
 
 @NgModule({
     declarations: [
@@ -59,6 +60,7 @@ import { AuthProvider } from '../providers/auth/auth';
             useClass: IonicErrorHandler
         },
         AuthProvider,
+        DistanceMatrixService
     ]
 })
 export class AppModule {}

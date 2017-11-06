@@ -7,6 +7,7 @@ import 'rxjs/add/operator/map';
 import { isNullOrUndefined } from "util";
 import * as Fuse from 'fuse.js';
 import { Geolocation } from '@ionic-native/geolocation';
+import { DistanceMatrixService } from '../../services/distanceMatrixService/distanceMatrixService'
 
 declare var google;
 let stash = []; // Array to contain Markers on the map
@@ -57,7 +58,7 @@ export class MapPage {
     navId: any;
     endValueIndex;
 
-    constructor(public navCtrl: NavController, public navParams: NavParams, public loading: LoadingController, public http: Http, private geolocation: Geolocation) {
+    constructor(public navCtrl: NavController, public navParams: NavParams, public loading: LoadingController, public http: Http, private geolocation: Geolocation, public distanceMatrixService: DistanceMatrixService) {
         this.exploreIndex = navParams.get('locationIndex');
         this.exploreIndex2 = navParams.get('locationIndex2');
         this.currentLat = navParams.get('currentLat');
