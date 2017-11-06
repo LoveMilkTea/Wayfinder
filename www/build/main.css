@@ -25209,11 +25209,6 @@ ion-navbar.toolbar {
   margin-right: 15px;
 }
 
-.user {
-  margin-bottom: 0;
-  font-size: 85%;
-}
-
 page-admin ion-title {
   position: absolute;
   top: 0;
@@ -25594,10 +25589,6 @@ page-map .street-tag {
 
 .card-header {
   padding: 0px 16px;
-}
-
-page-reset-password .invalid {
-  border-bottom: 1px solid #FF6153;
 }
 
 submit-data-coords-page #float-button {
