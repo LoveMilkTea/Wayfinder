@@ -15,6 +15,7 @@ export class AdminPage {
     App: any;
     db: any;
     items: string[];
+    filterValue: any;
 
     constructor(private afAuth: AngularFireAuth, private toast: ToastController, public navCtrl: NavController, public navParams: NavParams) {
         if (!firebase.apps.length) {
@@ -25,6 +26,7 @@ export class AdminPage {
         this.db = this.App.database();
         this.userInputRef = this.db.ref('/dataPoints/');
         this.masterDataRef = this.db.ref('/testPoints');
+        this.filterValue = 'showAll';
     }
 
     ionViewDidLoad() {
@@ -46,8 +48,11 @@ export class AdminPage {
     }
 
     approve(value) { // 'value' is the key for the entry
+        console.log(value);
+        console.log(value.key);
         this.userInputRef.child(value.key).update({'status': 'approved'});
         this.masterDataRef = this.masterDataRef.push();
+        console.log("not broke yet2");
         this.masterDataRef.set({
             'name': value.pointName,
             'address': value.address,
@@ -58,12 +63,13 @@ export class AdminPage {
             'website': value.website,
             'type': value.type,
         });
-        this.navCtrl.setRoot(this.navCtrl.getActive().component);
+        this.filterItems(this.filterValue);
+        //this.navCtrl.setRoot(this.navCtrl.getActive().component);
     }
 
     deny(value) {
         this.userInputRef.child(value.key).update({'status': 'denied'});
-        this.navCtrl.setRoot(this.navCtrl.getActive().component);
+        this.filterItems(this.filterValue);
     }
 
     editData(value) {
@@ -72,13 +78,18 @@ export class AdminPage {
 
     deleteItem(value) { // 'value' is the key for the entry
         this.userInputRef.child(value.key).remove();
-        this.navCtrl.setRoot(this.navCtrl.getActive().component); // refresh the page
+        this.filterItems(this.filterValue); // refresh the page
     }
     filterItems(value){
+        this.filterValue = value;
+        console.log(this.filterValue);
         const item = [];
         this.userInputRef.once('value').then(function (datakey) {
             datakey.forEach(function (data) {
                 const temp = data.val();
+                Object.assign(temp, {
+                    'key': data.key
+                });
                 if (value === 'showAll') {
                     item.push(temp);
                 } else if (temp.status === value){
