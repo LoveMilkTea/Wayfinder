@@ -1,17 +1,19 @@
-import { Component, ViewChild } from '@angular/core';
-import { Nav, Platform } from 'ionic-angular';
-import { StatusBar } from '@ionic-native/status-bar';
-import { SplashScreen } from '@ionic-native/splash-screen';
+import {Component, ViewChild} from '@angular/core';
+import {Nav, Platform} from 'ionic-angular';
+import {StatusBar} from '@ionic-native/status-bar';
+import {SplashScreen} from '@ionic-native/splash-screen';
+import {AdminPage}  from '../pages/admin/admin';
+import {MapPage}  from '../pages/map/map';
+import {LoginPage} from '../pages/login/login';
+import {ExplorePage} from "../pages/explore/explore";
+import {SubmitDataLandingPage} from '../pages/submit-data-landing/submit-data-landing';
+import {enableProdMode} from '@angular/core';
+import {AngularFireAuth} from 'angularfire2/auth';
+import {AuthProvider} from '../providers/auth/auth';
+import {FIREBASE_CONFIG} from "../app.firebase.config";
+import * as firebase from 'firebase/app';
 
-import { MapPage }  from '../pages/map/map';
-import { LoginPage } from '../pages/login/login';
-import { ExplorePage } from "../pages/explore/explore";
-import { SubmitDataLandingPage } from '../pages/submit-data-landing/submit-data-landing';
-import { enableProdMode } from '@angular/core';
-import { AngularFireAuth } from 'angularfire2/auth';
-import { AuthProvider } from '../providers/auth/auth';
-
-declare function require(name:string);
+declare function require(name: string);
 const ua = require('universal-analytics');
 
 enableProdMode();
@@ -26,6 +28,8 @@ export class App {
     rootPage: any;
     pages: Array<{title: string, icon: string, component: any}>;
     currentUser: any;
+    db: any
+    App: any
 
     constructor(public platform: Platform, public afAuth: AngularFireAuth, public statusBar: StatusBar, public splashScreen: SplashScreen, public authData: AuthProvider) {
         this.initializeApp();
@@ -47,7 +51,14 @@ export class App {
                 component: SubmitDataLandingPage
             },
         ];
-            this.afAuth.authState.subscribe(auth => this.currentUser = auth);// user info is inside auth object
+        this.afAuth.authState.subscribe(auth => this.currentUser = auth);// user info is inside auth object
+        if (!firebase.apps.length) {
+            this.App = firebase.initializeApp(FIREBASE_CONFIG);
+        } else {
+            this.App = firebase.app();
+        }
+        this.db = this.App.database();
+
     }
 
     initializeApp() {
@@ -65,14 +76,26 @@ export class App {
         this.nav.setRoot(page.component);
     }
 
-    logOut(){
+    logOut() {
         this.authData.loginState = false;
         this.afAuth.auth.signOut();
         this.nav.setRoot(MapPage);
     }
 
-    logIn(){
+    logIn() {
         this.nav.setRoot(LoginPage);
+    }
+
+    adminPage() {
+        let uid = this.currentUser.uid;
+        this.db.ref("users").once("value", (snapshot) => {
+            if (snapshot.val()[uid].roles) {
+                let temp = snapshot.val()[uid].roles;
+                if (temp.admin === true) {
+                    this.nav.setRoot('AdminPage');
+                }
+            }
+        });
     }
 
 }

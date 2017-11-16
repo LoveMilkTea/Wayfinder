@@ -53,7 +53,7 @@
     </ion-card-content>
     <ion-grid>
       <ion-row>
-        <ion-col class="column" col-6>
+        <ion-col *ngIf="item.status != 'approved' " class="column" col-6>
           <button ion-button small (click)="approve(item)">
             <ion-icon name='checkmark'></ion-icon>
              Approve
