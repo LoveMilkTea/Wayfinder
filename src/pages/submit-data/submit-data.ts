@@ -7,6 +7,7 @@ import * as firebase from 'firebase';
 import { Http } from '@angular/http';
 import { MapPage } from "../map/map";
 import {AuthProvider} from "../../providers/auth/auth";
+import {FirebaseProvider} from "../../providers/firebase/firebase";
 
 @Component({
     selector: 'submit-page',
@@ -15,8 +16,6 @@ import {AuthProvider} from "../../providers/auth/auth";
 
 export class SubmitDataPage {
     childRef: any;
-    App: any;
-    db: any;
     latitude: any;
     longitude: any;
     loader: any;
@@ -28,13 +27,8 @@ export class SubmitDataPage {
     lastName: any;
     email: any;
 
-    constructor(public navCtrl: NavController, public navParams: NavParams, public loading: LoadingController, private toast: ToastController, public http: Http, public authData: AuthProvider) {
-        if (!firebase.apps.length) {
-            this.App = firebase.initializeApp(FIREBASE_CONFIG);
-        } else {
-            this.App = firebase.app();
-        }
-        this.db = this.App.database();
+    constructor(public navCtrl: NavController, public navParams: NavParams, public loading: LoadingController, private toast: ToastController, public http: Http, public authData: AuthProvider, public database: FirebaseProvider) {
+
         this.token = this.navParams.get('token');
         if(!this.token) {
             this.latitude = this.navParams.get('lat');
@@ -45,7 +39,7 @@ export class SubmitDataPage {
         if(this.user){
             this.email = this.user.email;
             let uid = this.user.uid;
-            this.db.ref("users").once("value", (snapshot)=> {
+            this.database.users.once("value", (snapshot)=> {
                 if(snapshot.val()[uid]) {
                     this.firstName = snapshot.val()[uid].firstName;
                     this.lastName = snapshot.val()[uid].lastName;
@@ -66,7 +60,7 @@ export class SubmitDataPage {
             }
         }
         Object.assign(formData.value, {'status': 'pending'});
-        this.childRef = this.db.ref("dataPoints").push();
+        this.childRef = this.database.userInput.push();
         this.childRef.set(formData.value);
         this.toast.create({
             message: `Your point has been submitted! Wait for admin approval.`,

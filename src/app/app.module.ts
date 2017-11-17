@@ -21,6 +21,7 @@ import { SubmitDataLandingPage } from "../pages/submit-data-landing/submit-data-
 import { Geolocation } from '@ionic-native/geolocation';
 import { AuthProvider } from '../providers/auth/auth';
 import { DistanceMatrixService } from "../services/distanceMatrixService/distanceMatrixService";
+import { FirebaseProvider } from '../providers/firebase/firebase';
 
 @NgModule({
     declarations: [
@@ -60,7 +61,8 @@ import { DistanceMatrixService } from "../services/distanceMatrixService/distanc
             useClass: IonicErrorHandler
         },
         AuthProvider,
-        DistanceMatrixService
+        DistanceMatrixService,
+    FirebaseProvider
     ]
 })
 export class AppModule {}
