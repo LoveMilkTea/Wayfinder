@@ -2,11 +2,11 @@ import { Component, ViewChild } from '@angular/core';
 import { IonicPage, NavController, NavParams, ToastController } from 'ionic-angular';
 import { LoadingController } from 'ionic-angular';
 import { NgForm } from '@angular/forms';
-import { FIREBASE_CONFIG } from "./../../app.firebase.config";
 import * as firebase from 'firebase';
 import * as _ from 'underscore/underscore';
 import {AuthProvider} from "../../providers/auth/auth";
 import { LoginPage } from '../login/login';
+import {FirebaseProvider} from "../../providers/firebase/firebase";
 
 
 @IonicPage()
@@ -17,9 +17,6 @@ import { LoginPage } from '../login/login';
 
 export class PointsPage {
     @ViewChild('commentText') commentText;
-    ref: any;
-    App: any;
-    db: any;
     name: any;
     address: any;
     number: any;
@@ -31,14 +28,8 @@ export class PointsPage {
     showAdd: any;
     user: any;
 
-    constructor(public navCtrl: NavController, public navParams: NavParams, public loading: LoadingController, private toast: ToastController, public authData: AuthProvider) {
-        if (!firebase.apps.length) {
-            this.App = firebase.initializeApp(FIREBASE_CONFIG);
-        } else {
-            this.App = firebase.app();
-        }
-        this.db = this.App.database();
-        this.ref = this.db.ref("/testPoints/");
+    constructor(public navCtrl: NavController, public navParams: NavParams, public loading: LoadingController, private toast: ToastController, public authData: AuthProvider, public database: FirebaseProvider) {
+
         this.name = this.navParams.get('name');
         this.address = this.navParams.get('address');
         this.number = this.navParams.get('number');
@@ -64,7 +55,7 @@ export class PointsPage {
 
     showComments() {
         var item = [];
-        this.ref.child(this.key).child("comments").once("value")
+        this.database.masterData.child(this.key).child("comments").once("value")
             .then((dataPoints) => {
                 item = dataPoints.val();
                 this.comments = _.toArray(item);
@@ -77,7 +68,7 @@ export class PointsPage {
             this.date = new Date().toString();
             Object.assign(formData.value, {'dateTime': this.date});
             Object.assign(formData.value, {'userName': this.user.displayName});
-            let comments = this.ref.child(this.key);
+            let comments = this.database.masterData.child(this.key);
             comments.child('/comments').push(formData.value);
             this.showComments();
             this.toggleAddButton();

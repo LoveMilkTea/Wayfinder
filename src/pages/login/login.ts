@@ -10,6 +10,7 @@ import app = firebase.app;
 import {MapPage} from "../map/map";
 import {FIREBASE_CONFIG} from "./../../app.firebase.config";
 import * as firebase from 'firebase/app';
+import {FirebaseProvider} from "../../providers/firebase/firebase";
 
 @IonicPage()
 @Component({
@@ -21,20 +22,13 @@ export class LoginPage {
     user = {} as User;
     loginForm: FormGroup;
     public loading: Loading;
-    App: any;
-    db: any;
 
-    constructor(public authData: AuthProvider, public alertCtrl: AlertController, public navCtrl: NavController, public loadingCtrl: LoadingController, public formBuilder: FormBuilder) {
+    constructor(public authData: AuthProvider, public alertCtrl: AlertController, public navCtrl: NavController, public loadingCtrl: LoadingController, public formBuilder: FormBuilder, public database: FirebaseProvider) {
+
         this.loginForm = formBuilder.group({
             email: ['', Validators.compose([Validators.required, EmailValidator.isValid])],
             password: ['', Validators.compose([Validators.minLength(6), Validators.required])]
         });
-        if (!firebase.apps.length) {
-            this.App = firebase.initializeApp(FIREBASE_CONFIG);
-        } else {
-            this.App = firebase.app();
-        }
-        this.db = this.App.database();
     }
 
     ionViewDidLoad() {
@@ -66,7 +60,7 @@ export class LoginPage {
                     } else {
                         this.authData.loginState = true;
                         let uid = user.uid;
-                        this.db.ref("users").once("value", (snapshot) => {
+                        this.database.users.once("value", (snapshot) => {
                             if (snapshot.val()[uid].roles) {
                                 let temp = snapshot.val()[uid].roles;
                                 if (temp.admin === true) {
