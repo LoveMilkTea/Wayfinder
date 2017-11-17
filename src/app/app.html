@@ -17,7 +17,7 @@
         Log In
       </button>
     </ion-list>
-    <button menuClose ion-item class="user" *ngIf="authData.loginState">
+    <button menuClose ion-item class="user" *ngIf="authData.loginState" (click)="adminPage()">
       You are logged in as {{currentUser.displayName}}
     </button>
   </ion-content>
