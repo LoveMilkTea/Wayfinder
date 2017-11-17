@@ -10,8 +10,7 @@ import {SubmitDataLandingPage} from '../pages/submit-data-landing/submit-data-la
 import {enableProdMode} from '@angular/core';
 import {AngularFireAuth} from 'angularfire2/auth';
 import {AuthProvider} from '../providers/auth/auth';
-import {FIREBASE_CONFIG} from "../app.firebase.config";
-import * as firebase from 'firebase/app';
+import {FirebaseProvider} from "../providers/firebase/firebase";
 
 declare function require(name: string);
 const ua = require('universal-analytics');
@@ -28,10 +27,8 @@ export class App {
     rootPage: any;
     pages: Array<{title: string, icon: string, component: any}>;
     currentUser: any;
-    db: any
-    App: any
 
-    constructor(public platform: Platform, public afAuth: AngularFireAuth, public statusBar: StatusBar, public splashScreen: SplashScreen, public authData: AuthProvider) {
+    constructor(public platform: Platform, public afAuth: AngularFireAuth, public statusBar: StatusBar, public splashScreen: SplashScreen, public authData: AuthProvider, public database: FirebaseProvider) {
         this.initializeApp();
 
         this.pages = [
@@ -52,12 +49,6 @@ export class App {
             },
         ];
         this.afAuth.authState.subscribe(auth => this.currentUser = auth);// user info is inside auth object
-        if (!firebase.apps.length) {
-            this.App = firebase.initializeApp(FIREBASE_CONFIG);
-        } else {
-            this.App = firebase.app();
-        }
-        this.db = this.App.database();
 
     }
 
@@ -88,7 +79,7 @@ export class App {
 
     adminPage() {
         let uid = this.currentUser.uid;
-        this.db.ref("users").once("value", (snapshot) => {
+        this.database.users.once("value", (snapshot) => {
             if (snapshot.val()[uid].roles) {
                 let temp = snapshot.val()[uid].roles;
                 if (temp.admin === true) {

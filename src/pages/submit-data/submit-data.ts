@@ -2,7 +2,6 @@ import { Component, ViewChild, ElementRef } from '@angular/core';
 import { NavController, ToastController, NavParams } from 'ionic-angular';
 import { LoadingController } from 'ionic-angular';
 import { NgForm } from '@angular/forms';
-import { FIREBASE_CONFIG } from "./../../app.firebase.config";
 import * as firebase from 'firebase';
 import { Http } from '@angular/http';
 import { MapPage } from "../map/map";
