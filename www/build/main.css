@@ -25212,6 +25212,7 @@ ion-navbar.toolbar {
 .user {
   margin-bottom: 0;
   font-size: 85%;
+  text-align: center;
 }
 
 page-admin ion-title {
