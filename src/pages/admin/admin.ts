@@ -35,11 +35,8 @@ export class AdminPage {
     }
 
     approve(value) { // 'value' is the key for the entry
-        console.log(value);
-        console.log(value.key);
         this.database.userInput.child(value.key).update({'status': 'approved'});
         this.database.masterData = this.database.masterData.push();
-        console.log("not broke yet2");
         this.database.masterData.set({
             'name': value.pointName,
             'address': value.address,
@@ -48,7 +45,7 @@ export class AdminPage {
             'description': value.description,
             'number': value.phone,
             'website': value.website,
-            'type': value.type,
+            'type': value.type
         });
         this.filterItems(this.filterValue);
         //this.navCtrl.setRoot(this.navCtrl.getActive().component);
@@ -67,9 +64,8 @@ export class AdminPage {
         this.database.userInput.child(value.key).remove();
         this.filterItems(this.filterValue); // refresh the page
     }
-    filterItems(value){
+    filterItems(value) {
         this.filterValue = value;
-        console.log(this.filterValue);
         const item = [];
         this.database.userInput.once('value').then(function (datakey) {
             datakey.forEach(function (data) {

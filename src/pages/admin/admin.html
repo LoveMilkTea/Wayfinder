@@ -38,6 +38,7 @@
         <p>Email: {{item.email}}</p>
         <br/>
         <h2>Point of Interest Information</h2>
+        <p>Timestamp: {{item.dateTime}}</p>
         <p>Point Name: {{item.pointName}}</p>
         <p>Latitude: {{item.latitude}}</p>
         <p>Longitude: {{item.longitude}}</p>
@@ -53,7 +54,7 @@
     </ion-card-content>
     <ion-grid>
       <ion-row>
-        <ion-col *ngIf="item.status != 'approved' " class="column" col-6>
+        <ion-col *ngIf="item.status != 'approved'" class="column" col-6>
           <button ion-button small (click)="approve(item)">
             <ion-icon name='checkmark'></ion-icon>
              Approve
@@ -81,13 +82,6 @@
         </ion-col>
       </ion-row>
     </ion-grid>
-    <!-- <button ion-button small (click)="approve(item)">Approve</button>
-    <button ion-button small color="blue"(click)="editData(item)">Edit</button>
-    <button ion-button small color="danger"(click)="deny(item)">Deny</button>
-    <button ion-button small color="danger" icon-start (click)="deleteItem(item)">
-      <ion-icon name='close'></ion-icon>
-      Remove
-    </button> -->
   </ion-card>
 
 </ion-content>
