@@ -2,11 +2,11 @@ import { Component, ViewChild, ElementRef } from '@angular/core';
 import { NavController, ToastController, NavParams } from 'ionic-angular';
 import { LoadingController } from 'ionic-angular';
 import { NgForm } from '@angular/forms';
-import { FIREBASE_CONFIG } from "./../../app.firebase.config";
 import * as firebase from 'firebase';
-import { FormBuilder, FormGroup } from '@angular/forms';
 import { Http } from '@angular/http';
 import { MapPage } from "../map/map";
+import {AuthProvider} from "../../providers/auth/auth";
+import {FirebaseProvider} from "../../providers/firebase/firebase";
 
 @Component({
     selector: 'submit-page',
@@ -14,30 +14,36 @@ import { MapPage } from "../map/map";
 })
 
 export class SubmitDataPage {
-    ref: any;
     childRef: any;
-    App: any;
-    db: any;
     latitude: any;
     longitude: any;
     loader: any;
     url: any;
     address: any;
     token: any;
+    user: any;
+    firstName: any;
+    lastName: any;
+    email: any;
 
-    constructor(public navCtrl: NavController, public navParams: NavParams, public loading: LoadingController, private toast: ToastController, public http: Http) {
-        if (!firebase.apps.length) {
-            this.App = firebase.initializeApp(FIREBASE_CONFIG);
-        } else {
-            this.App = firebase.app();
-        }
-        this.db = this.App.database();
-        this.ref = this.db.ref("dataPoints");
+    constructor(public navCtrl: NavController, public navParams: NavParams, public loading: LoadingController, private toast: ToastController, public http: Http, public authData: AuthProvider, public database: FirebaseProvider) {
+
         this.token = this.navParams.get('token');
         if(!this.token) {
             this.latitude = this.navParams.get('lat');
             this.longitude = this.navParams.get('long');
             this.address = this.navParams.get('address');
+        }
+        this.user = firebase.auth().currentUser;
+        if(this.user){
+            this.email = this.user.email;
+            let uid = this.user.uid;
+            this.database.users.once("value", (snapshot)=> {
+                if(snapshot.val()[uid]) {
+                    this.firstName = snapshot.val()[uid].firstName;
+                    this.lastName = snapshot.val()[uid].lastName;
+                }
+            });
         }
     }
 
@@ -53,7 +59,7 @@ export class SubmitDataPage {
             }
         }
         Object.assign(formData.value, {'status': 'pending'});
-        this.childRef = this.ref.push();
+        this.childRef = this.database.userInput.push();
         this.childRef.set(formData.value);
         this.toast.create({
             message: `Your point has been submitted! Wait for admin approval.`,

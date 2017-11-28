@@ -1,11 +1,11 @@
-import { Component, ViewChild, ElementRef, Injectable } from '@angular/core';
-import { IonicPage, NavController, NavParams, LoadingController } from 'ionic-angular';
-import { Http } from '@angular/http';
+import {Component, ViewChild, ElementRef, Injectable} from '@angular/core';
+import {IonicPage, NavController, NavParams, LoadingController} from 'ionic-angular';
+import {Http} from '@angular/http';
 import 'rxjs/add/operator/map';
-import { FIREBASE_CONFIG } from "./../../app.firebase.config";
+import {FIREBASE_CONFIG} from "./../../app.firebase.config";
 import * as firebase from 'firebase';
-import { SubmitDataPage } from "../submit-data/submit-data";
-import { AlertController } from 'ionic-angular';
+import {SubmitDataPage} from "../submit-data/submit-data";
+import {AlertController} from 'ionic-angular';
 
 declare var google;
 
@@ -27,24 +27,16 @@ export class SubmitDataChooseCoordsPage {
     loader: any;
 
 
-    constructor(public navCtrl: NavController, private alertCtrl: AlertController, public loading: LoadingController,  public http: Http) {
-
-        if (!firebase.apps.length) {
-            this.App = firebase.initializeApp(FIREBASE_CONFIG);
-        } else {
-            console.log(firebase);
-            this.App = firebase.app();
-        }
-        this.db = this.App.database();
-        this.ref = this.db.ref("testPoints");
+    constructor(public navCtrl: NavController, private alertCtrl: AlertController, public loading: LoadingController, public http: Http) {
 
     }
+
     ionViewDidLoad() {
         this.loadMap();
     }
 
 
-    getCoords(){
+    getCoords() {
         this.url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${this.lat},${this.long}&key=AIzaSyCeP_xxvneWjyU_0EIg5slVUl3I6TtH4oA`;
         this.http.request(this.url)
             .map(res => res.json()).subscribe(data => {
@@ -53,40 +45,45 @@ export class SubmitDataChooseCoordsPage {
         this.loader = this.loading.create({
             content: "Getting Coordinates..."
         });
-            this.loader.present().then(() => {
-                setTimeout(()=>{
-                    let alert = this.alertCtrl.create({
-                        title: 'Submit This Point',
-                        subTitle: 'Would you to use the following information to submit your point?',
-                        message: `Latitude: ${this.lat}  \n Longitude: ${this.long} \n\n Address: ${this.address}`,
-                        buttons: [
-                            {
-                                text: 'ok',
-                                role: 'approve',
-                                handler: () => {
-                                    this.navCtrl.push(SubmitDataPage, {'token': false, 'lat' : this.lat, 'long': this.long, 'address': this.address});
-                                }
-                            },
-                            {
-                                text: 'cancel',
-                                role:'cancel',
-                                handler: () => {
-                                }
-                            }],
-                    });
-                    alert.present();
-                    this.loader.dismiss();
-                }, 3000);})
-            }
-
+        this.loader.present().then(() => {
+            setTimeout(() => {
+                let alert = this.alertCtrl.create({
+                    title: 'Submit This Point',
+                    subTitle: 'Would you to use the following information to submit your point?',
+                    message: `Latitude: ${this.lat}  \n Longitude: ${this.long} \n\n Address: ${this.address}`,
+                    buttons: [
+                        {
+                            text: 'ok',
+                            role: 'approve',
+                            handler: () => {
+                                this.navCtrl.push(SubmitDataPage, {
+                                    'token': false,
+                                    'lat': this.lat,
+                                    'long': this.long,
+                                    'address': this.address
+                                });
+                            }
+                        },
+                        {
+                            text: 'cancel',
+                            role: 'cancel',
+                            handler: () => {
+                            }
+                        }],
+                });
+                alert.present();
+                this.loader.dismiss();
+            }, 3000);
+        })
+    }
 
     getAddress() {
-            this.url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${this.lat},${this.long}&key=AIzaSyCeP_xxvneWjyU_0EIg5slVUl3I6TtH4oA`;
+        this.url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${this.lat},${this.long}&key=AIzaSyCeP_xxvneWjyU_0EIg5slVUl3I6TtH4oA`;
 
-            this.http.request(this.url)
-                .map(res => res.json()).subscribe(data => {
-                this.address = data.results[0].formatted_address;
-            });
+        this.http.request(this.url)
+            .map(res => res.json()).subscribe(data => {
+            this.address = data.results[0].formatted_address;
+        });
         return this.address;
     }
 

@@ -2,13 +2,15 @@ import {Component} from '@angular/core';
 import {IonicPage, NavController, LoadingController, Loading, AlertController, ToastController} from 'ionic-angular';
 import {User} from "../../models/user";
 import {AuthProvider} from "../../providers/auth/auth";
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { EmailValidator } from '../../validators/email';
-import { SignupPage } from '../signup/signup';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {EmailValidator} from '../../validators/email';
+import {SignupPage} from '../signup/signup';
+import {ResetPasswordPage} from '../reset-password/reset-password';
 import app = firebase.app;
-import { MapPage } from "../map/map";
-import { FIREBASE_CONFIG } from "./../../app.firebase.config";
+import {MapPage} from "../map/map";
+import {FIREBASE_CONFIG} from "./../../app.firebase.config";
 import * as firebase from 'firebase/app';
+import {FirebaseProvider} from "../../providers/firebase/firebase";
 
 @IonicPage()
 @Component({
@@ -18,24 +20,15 @@ import * as firebase from 'firebase/app';
 export class LoginPage {
 
     user = {} as User;
-    loginForm:FormGroup;
-    public loading:Loading;
-    ref: any;
-    App: any;
-    db: any;
+    loginForm: FormGroup;
+    public loading: Loading;
 
-    constructor(public authData: AuthProvider, public alertCtrl: AlertController, public navCtrl: NavController, public loadingCtrl: LoadingController, public formBuilder: FormBuilder) {
+    constructor(public authData: AuthProvider, public alertCtrl: AlertController, public navCtrl: NavController, public loadingCtrl: LoadingController, public formBuilder: FormBuilder, public database: FirebaseProvider) {
+
         this.loginForm = formBuilder.group({
             email: ['', Validators.compose([Validators.required, EmailValidator.isValid])],
             password: ['', Validators.compose([Validators.minLength(6), Validators.required])]
         });
-        if (!firebase.apps.length) {
-            this.App = firebase.initializeApp(FIREBASE_CONFIG);
-        } else {
-            this.App = firebase.app();
-        }
-        this.db = this.App.database();
-        this.ref = this.db.ref("users");
     }
 
     ionViewDidLoad() {
@@ -45,22 +38,40 @@ export class LoginPage {
     loginUser() {
         if (!this.loginForm.valid) {
             console.log(this.loginForm.value);
-        } else {
+        }
+        else {
             this.authData.loginUser(this.loginForm.value.email, this.loginForm.value.password)
-                .then(authData => {
-                    this.authData.loginState = true;
-                    var user = this.authData.getUserRole();
-                     var uid = user.uid;
-                     this.ref.once("value", (snapshot)=> {
-                             var temp = snapshot.val()[uid].roles;
-                             if(temp.admin === true){
-                                 this.navCtrl.setRoot('AdminPage');
-                             }else{
-                                 this.navCtrl.setRoot(MapPage);
-                             }
-                         });
+                .then(() => {
+                    let user = firebase.auth().currentUser;
+                    if (user.emailVerified === false) {
+                        this.loading.dismiss().then(() => {
+                            let alert = this.alertCtrl.create({
+                                message: `Email Not verfied. Please check email and verify before logging in`,
+                                buttons: [
+                                    {
+                                        text: "Ok",
+                                        role: 'cancel'
+                                    }
+                                ]
+                            });
+                            alert.present();
+                        });
+                        this.authData.logoutUser();
+                    } else {
+                        this.authData.loginState = true;
+                        let uid = user.uid;
+                        this.database.users.once("value", (snapshot) => {
+                            if (snapshot.val()[uid].roles) {
+                                let temp = snapshot.val()[uid].roles;
+                                if (temp.admin === true) {
+                                    this.navCtrl.setRoot('AdminPage');
+                                } else {
+                                    this.navCtrl.setRoot(MapPage);
+                                }
+                            }
+                        });
+                    }
                 }, error => {
-                    console.log("never");
                     this.loading.dismiss().then(() => {
                         let alert = this.alertCtrl.create({
                             message: `${error.message} Please try again`,
@@ -83,6 +94,10 @@ export class LoginPage {
     }
     createAccount() {
         this.navCtrl.push('SignupPage');
+    }
+
+    goToResetPassword() {
+        this.navCtrl.push('ResetPasswordPage');
     }
 }
 

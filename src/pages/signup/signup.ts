@@ -4,7 +4,8 @@ import {
     NavController,
     LoadingController,
     Loading,
-    AlertController } from 'ionic-angular';
+    AlertController,
+    ToastController} from 'ionic-angular';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthProvider } from '../../providers/auth/auth';
 import { EmailValidator } from '../../validators/email';
@@ -21,7 +22,7 @@ export class SignupPage {
 
     constructor(public nav: NavController, public authData: AuthProvider,
                 public formBuilder: FormBuilder, public loadingCtrl: LoadingController,
-                public alertCtrl: AlertController) {
+                public alertCtrl: AlertController, private toast: ToastController) {
 
         this.signupForm = formBuilder.group({
             email: ['', Validators.compose([Validators.required, EmailValidator.isValid])],
@@ -63,6 +64,10 @@ export class SignupPage {
                 dismissOnPageChange: true,
             });
             this.loading.present();
+            this.toast.create({
+                message: `Account Created, Check email for verification.`,
+                duration: 3000
+            }).present();
         }
     }
 

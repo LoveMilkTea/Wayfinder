@@ -8,24 +8,26 @@
 </ion-header>
 
 <ion-content padding>
-  <ion-img center style="background: none;" *ngIf="image" class="pointImage" src={{image}}></ion-img>
-  <div>
-    <br>
-    <h2 *ngIf="name && name.toLowerCase() != 'n/a'">
-      {{name}}
-    </h2>
-    <div *ngIf="addess && address.toLowerCase() != 'n/a'">
-      {{address}}
+  <div center style="width: 100%; height: 100%;">
+    <ion-img center *ngIf="image" class="pointImage" src={{image}}></ion-img>
+    <div>
+      <br>
+      <h2 *ngIf="name && name.toLowerCase() != 'n/a'">
+        {{name}}
+      </h2>
+      <div *ngIf="addess && address.toLowerCase() != 'n/a'">
+        {{address}}
+      </div>
+      <div *ngIf="number && number.toLowerCase() != 'n/a'">
+        {{number}}
+      </div>
+      <hr *ngIf="description && description.toLowerCase() != 'n/a'">
+      <div *ngIf="description && description.toLowerCase() != 'n/a'">
+        {{description}}
+        <hr>
+      </div>
+      <br>
     </div>
-    <div *ngIf="number && number.toLowerCase() != 'n/a'">
-      {{number}}
-    </div>
-    <hr *ngIf="description && description.toLowerCase() != 'n/a'">
-    <div *ngIf="description && description.toLowerCase() != 'n/a'">
-      {{description}}
-      <hr>
-    </div>
-    <br>
   </div>
 
   <div>

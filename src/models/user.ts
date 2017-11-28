@@ -8,11 +8,16 @@ export class User {
     email:    string;
     photoURL: string;
     roles:    Roles;
+    firstName: string;
+    lastName: string;
 
-    constructor(authData) {
+    constructor(authData, firstName, lastName) {
         this.email    = authData.email
         this.photoURL = authData.photoURL
+        this.displayName = authData.displayName
         this.roles    = { reader: true, author: true }
+        this.firstName = firstName;
+        this.lastName = lastName;
     }
 
 }

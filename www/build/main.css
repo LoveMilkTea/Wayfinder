@@ -25209,6 +25209,12 @@ ion-navbar.toolbar {
   margin-right: 15px;
 }
 
+.user {
+  margin-bottom: 0;
+  font-size: 85%;
+  text-align: center;
+}
+
 page-admin ion-title {
   position: absolute;
   top: 0;
@@ -25520,25 +25526,37 @@ page-map .scrollable {
   box-shadow: 0px 5px 10px 5px rgba(1, 1, 1, 0.2);
 }
 
+page-map .windowContainer {
+  padding-left: 25px;
+}
+
 page-map #windowHead {
   margin-top: 3%;
-  color: black;
+  color: #259975;
   font-weight: bold;
   font-size: 130%;
+  text-align: center;
+  padding-bottom: 10px;
 }
 
-page-map #addressTitle {
-  font-weight: bold;
-  margin-top: 3%;
+page-map #windowDesc {
+  margin-top: 10px;
+  font-weight: 450;
 }
 
-page-map #phoneTitle {
-  font-weight: bold;
+page-map #windowAddress {
+  margin-top: 10px;
+}
+
+page-map #windowPhone {
+  margin-top: 7px;
 }
 
 page-map .ui.fluid.image.info {
   width: 100%;
   height: 50%;
+  -webkit-box-shadow: 3px 3px 2px #ccc;
+  box-shadow: 3px 3px 2px #ccc;
 }
 
 page-map .tagButton {
@@ -25572,15 +25590,18 @@ page-map .street-tag {
 
 .gm-style-iw .ui.grid #infoIcon {
   cursor: pointer;
-  color: #18A885;
+  color: #259975;
   font-style: normal;
   text-decoration: none;
-  margin-top: 3%;
+  text-align: right;
+  font-size: 17px;
+  font-weight: bold;
 }
 
 .pointImage {
   height: 50%;
   width: 100%;
+  background: none;
 }
 
 .font {
@@ -25589,6 +25610,10 @@ page-map .street-tag {
 
 .card-header {
   padding: 0px 16px;
+}
+
+page-reset-password .invalid {
+  border-bottom: 1px solid #FF6153;
 }
 
 submit-data-coords-page #float-button {
