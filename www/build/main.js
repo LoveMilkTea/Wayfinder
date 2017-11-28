@@ -169,17 +169,92 @@ AuthProvider = __decorate([
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-const FIREBASE_CONFIG = {
-    apiKey: "AIzaSyBwEarQZ-Z5DBO7UyZoxSUxYsdOVWJAh_I",
-    authDomain: "hacc2017-4c641.firebaseapp.com",
-    databaseURL: "https://hacc2017-4c641.firebaseio.com",
-    projectId: "hacc2017-4c641",
-    storageBucket: "",
-    messagingSenderId: "79619520095"
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return AuthProvider; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_rxjs_add_operator_map__ = __webpack_require__(98);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_rxjs_add_operator_map___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_rxjs_add_operator_map__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_angularfire2_auth__ = __webpack_require__(117);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_firebase_app__ = __webpack_require__(40);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_firebase_app___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_firebase_app__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__models_user__ = __webpack_require__(417);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_rxjs_BehaviorSubject__ = __webpack_require__(418);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_rxjs_BehaviorSubject___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5_rxjs_BehaviorSubject__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__app_firebase_config__ = __webpack_require__(58);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_rxjs_add_observable_of__ = __webpack_require__(419);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_rxjs_add_observable_of___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_7_rxjs_add_observable_of__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8_rxjs_add_operator_switchMap__ = __webpack_require__(421);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8_rxjs_add_operator_switchMap___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_8_rxjs_add_operator_switchMap__);
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-/* harmony export (immutable) */ __webpack_exports__["a"] = FIREBASE_CONFIG;
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
 
-//# sourceMappingURL=app.firebase.config.js.map
+
+
+
+
+
+
+
+
+let AuthProvider = class AuthProvider {
+    constructor(afAuth) {
+        this.afAuth = afAuth;
+        //used as a global variable to display different views for logged in users
+        //maybe change to behaviorsubject...
+        this.loginState = false;
+        this.user = new __WEBPACK_IMPORTED_MODULE_5_rxjs_BehaviorSubject__["BehaviorSubject"](null);
+        if (!__WEBPACK_IMPORTED_MODULE_3_firebase_app__["apps"].length) {
+            this.App = __WEBPACK_IMPORTED_MODULE_3_firebase_app__["initializeApp"](__WEBPACK_IMPORTED_MODULE_6__app_firebase_config__["a" /* FIREBASE_CONFIG */]);
+        }
+        else {
+            this.App = __WEBPACK_IMPORTED_MODULE_3_firebase_app__["app"]();
+        }
+        this.db = this.App.database();
+        this.ref = this.db.ref("users");
+    }
+    loginUser(newEmail, newPassword) {
+        return this.afAuth.auth.signInWithEmailAndPassword(newEmail, newPassword);
+    }
+    resetPassword(email) {
+        return this.afAuth.auth.sendPasswordResetEmail(email);
+    }
+    logoutUser() {
+        return this.afAuth.auth.signOut();
+    }
+    signupUser(newEmail, newPassword) {
+        return this.afAuth.auth.createUserWithEmailAndPassword(newEmail, newPassword);
+    }
+    createUser(newFirstName, newLastName) {
+        //updating the firebase default user accounts
+        var user = __WEBPACK_IMPORTED_MODULE_3_firebase_app__["auth"]().currentUser;
+        user.updateProfile({
+            displayName: `${newFirstName} ${newLastName}`,
+            photoURL: "",
+        }).then(() => {
+            //creates an entry in the user db with the same uid as the authenticated account
+            const userData = new __WEBPACK_IMPORTED_MODULE_4__models_user__["a" /* User */](user);
+            this.db.ref("users").child(user.uid).set(userData);
+        }).catch(function (error) {
+            console.log(error);
+        });
+    }
+    getUserRole() {
+        var user = __WEBPACK_IMPORTED_MODULE_3_firebase_app__["auth"]().currentUser;
+        return user;
+    }
+};
+AuthProvider = __decorate([
+    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["B" /* Injectable */])(),
+    __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_2_angularfire2_auth__["a" /* AngularFireAuth */]])
+], AuthProvider);
+
+//# sourceMappingURL=auth.js.map
 
 /***/ }),
 
@@ -205,7 +280,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-
 
 
 
@@ -275,6 +349,14 @@ let SubmitDataPage = class SubmitDataPage {
                 });
             });
         }
+        Object.assign(formData.value, { 'status': 'pending' });
+        this.childRef = this.ref.push();
+        this.childRef.set(formData.value);
+        this.toast.create({
+            message: `Your point has been submitted! Wait for admin approval.`,
+            duration: 3000
+        }).present();
+        this.navCtrl.setRoot(__WEBPACK_IMPORTED_MODULE_5__map_map__["a" /* MapPage */]);
     }
     getAddress() {
         this.url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${this.latitude},${this.longitude}&key=AIzaSyCeP_xxvneWjyU_0EIg5slVUl3I6TtH4oA`;
@@ -544,7 +626,6 @@ ExplorePage = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["B" /* Injectable */])(),
     __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["i" /* NavController */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["j" /* NavParams */], __WEBPACK_IMPORTED_MODULE_3__angular_http__["a" /* Http */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["g" /* LoadingController */]])
 ], ExplorePage);
-
 //# sourceMappingURL=explore.js.map
 
 /***/ }),
@@ -614,7 +695,6 @@ webpackAsyncContext.id = 289;
 module.exports = webpackAsyncContext;
 
 /***/ }),
-
 /***/ 332:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -632,7 +712,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-
 
 let DistanceMatrixService = class DistanceMatrixService {
     constructor() {
@@ -685,11 +764,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-
-
-
-
-
 
 let SubmitDataLandingPage = class SubmitDataLandingPage {
     constructor(navCtrl, loading, toast, http) {
@@ -1088,6 +1162,7 @@ SubmitDataChooseCoordsPage = __decorate([
 
 /***/ }),
 
+
 /***/ 436:
 /***/ (function(module, exports) {
 
@@ -1168,26 +1243,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 let AppModule = class AppModule {
 };
@@ -1918,8 +1973,6 @@ let MapPage = class MapPage {
         }, (rej) => {
             console.error("Could not load local data", rej);
         });
-    }
-    doFilter() {
         this.filterSelect.open();
     }
     filterMarker(category) {
@@ -2337,6 +2390,52 @@ let MapPage = class MapPage {
                         }
                     ]
                 },
+                // Remove the next five if we want labels back
+                {
+                    "featureType": "poi",
+                    "elementType": "labels",
+                    "stylers": [
+                        {
+                            "visibility": "off"
+                        }
+                    ]
+                },
+                {
+                    "featureType": "poi",
+                    "elementType": "labels.text",
+                    "stylers": [
+                        {
+                            "visibility": "off"
+                        }
+                    ]
+                },
+                {
+                    "featureType": "poi",
+                    "elementType": "labels.text.fill",
+                    "stylers": [
+                        {
+                            "visibility": "simplified"
+                        }
+                    ]
+                },
+                {
+                    "featureType": "poi",
+                    "elementType": "labels.text.stroke",
+                    "stylers": [
+                        {
+                            "visibility": "off"
+                        }
+                    ]
+                },
+                {
+                    "featureType": "poi",
+                    "elementType": "labels.icon",
+                    "stylers": [
+                        {
+                            "visibility": "off"
+                        }
+                    ]
+                },
                 {
                     "featureType": "road",
                     "elementType": "geometry",
@@ -2533,9 +2632,9 @@ MapPage = __decorate([
     __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_3_ionic_angular__["i" /* NavController */], __WEBPACK_IMPORTED_MODULE_3_ionic_angular__["j" /* NavParams */], __WEBPACK_IMPORTED_MODULE_3_ionic_angular__["g" /* LoadingController */], __WEBPACK_IMPORTED_MODULE_4__angular_http__["a" /* Http */], __WEBPACK_IMPORTED_MODULE_7__ionic_native_geolocation__["a" /* Geolocation */], __WEBPACK_IMPORTED_MODULE_8__services_distanceMatrixService_distanceMatrixService__["a" /* DistanceMatrixService */]])
 ], MapPage);
 
-//# sourceMappingURL=map.js.map
+  //# sourceMappingURL=map.js.map
 
 /***/ })
-
+  
 },[448]);
 //# sourceMappingURL=main.js.map
