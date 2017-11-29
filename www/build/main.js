@@ -1462,7 +1462,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 let stash = []; // Array to contain Markers on the map
-let timedStash = [];
+let eventStash = [];
 let MapPage = class MapPage {
     constructor(navCtrl, navParams, loading, http, geolocation, distanceMatrixService) {
         this.navCtrl = navCtrl;
@@ -1603,7 +1603,7 @@ let MapPage = class MapPage {
         this.loadTagData(); // Load all the data from firebase once
         this.loadMap();
         this.getLatLng();
-        this.placeTimedMarker();
+        this.addTimedEvent('UH End of Year Bash', 'A end of the year party for all UH Manoa students!', 'http://curvysewingcollective.com/wp-content/uploads/2017/10/CSC-Party-Time-400x400.png', 21.296967, -157.821814, 5);
     }
     searchPoints(input) {
         this.isSearching = true;
@@ -2028,33 +2028,11 @@ let MapPage = class MapPage {
         infoContent += '</div>';
         return infoContent;
     }
-    placeTimedMarker() {
-        var uh = { lat: 21.3159, lng: 157.8033 };
-        this.marker = new google.maps.Marker({
-            position: uh,
-            map: this.map,
-            animation: google.maps.Animation.BOUNCE
-        });
-        timedStash.push(this.marker);
-        setTimeout(function () {
-            if (timedStash) {
-                for (let i = 0; i < timedStash.length; i++) {
-                    timedStash[i].setMap(null);
-                }
-                timedStash.length = 0;
-                this.changeIcon = false;
-            }
-            else {
-                console.log('Stash array does not exist!');
-            }
-        }, 2000);
-    }
     placeAllMarkers() {
         this.clearAllMarkers();
         this.infoWindow = new google.maps.InfoWindow({
             maxWidth: 350
         });
-        this.placeTimedMarker();
         for (let i = 0, length = this.geoMarkers.length; i < length; i++) {
             let data = this.geoMarkers[i], latLng = new google.maps.LatLng(data.lat, data.lng);
             // Creating a marker and putting it on the map
@@ -2086,19 +2064,49 @@ let MapPage = class MapPage {
             this.map.setCenter({ lat: 21.2969, lng: -157.8171 });
             this.map.setZoom(15);
         }
+    }
+    addTimedEvent(event, description, image, lat, lng, hours) {
+        let infoContent = '<div class="ui grid windowContainer">';
+        infoContent += '<div id="windowHead">' + event + '</div>';
+        infoContent += '<img class="ui fluid image info" src="' + image + '">';
+        infoContent += '<div id="windowDesc">' + description + '</div>';
+        infoContent += '</div>';
+        let miliseconds = 3.6e+6;
+        let duration = miliseconds * hours;
+        this.infoWindow = new google.maps.InfoWindow({
+            maxWidth: 400
+        });
+        this.marker = new google.maps.Marker({
+            position: new google.maps.LatLng(lat, lng),
+            map: this.map,
+            title: event,
+            draggable: false,
+            animation: google.maps.Animation.DROP
+        });
+        eventStash.push(this.marker);
+        //http://themocracy.com/wp-content/uploads/2016/12/Parties.jpg used as a sample image
+        google.maps.event.addListener(this.marker, 'click', (() => {
+            this.infoWindow.setContent(infoContent);
+            this.isInfoWindowOpen = true;
+            this.marker.setPosition({ lat: lat, lng: lng });
+            this.infoWindow.open(this.map, this.marker);
+        }));
+        google.maps.event.addListener(this.infoWindow, 'closeclick', (() => {
+            this.isInfoWindowOpen = false;
+        }));
         setTimeout(function () {
-            if (stash) {
-                for (let i = 0; i < stash.length; i++) {
-                    stash[i].setMap(null);
+            if (eventStash) {
+                for (let i = 0; i < eventStash.length; i++) {
+                    eventStash[i].setMap(null);
                 }
-                stash.length = 0;
+                eventStash.length = 0;
                 this.changeIcon = false;
             }
             else {
                 console.log('Stash array does not exist!');
             }
             // Markers disappear after 200000 seconds (proof of concept for timed events
-        }, 200000);
+        }, duration);
     }
     getLatLng() {
         if (this.currentLat && this.currentLng && !this.latLng) {
@@ -2501,19 +2509,20 @@ let MapPage = class MapPage {
 };
 __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_13" /* ViewChild */])('map'),
-    __metadata("design:type", __WEBPACK_IMPORTED_MODULE_0__angular_core__["u" /* ElementRef */])
+    __metadata("design:type", typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["u" /* ElementRef */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_0__angular_core__["u" /* ElementRef */]) === "function" && _a || Object)
 ], MapPage.prototype, "mapElement", void 0);
 __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_13" /* ViewChild */])('filterSelect'),
-    __metadata("design:type", __WEBPACK_IMPORTED_MODULE_3_ionic_angular__["l" /* Select */])
+    __metadata("design:type", typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_3_ionic_angular__["l" /* Select */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3_ionic_angular__["l" /* Select */]) === "function" && _b || Object)
 ], MapPage.prototype, "filterSelect", void 0);
 MapPage = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["n" /* Component */])({
         selector: 'page-map',template:/*ion-inline-start:"/Users/chrisnguyenhi/Documents/git/Wayfinder/src/pages/map/map.html"*/'<ion-header>\n</ion-header>\n\n<ion-content>\n\n  <div *ngIf="!isSearching && !inStreetView()" id="float-button-left-top">\n    <button ion-button clear menuToggle>\n      <ion-icon id="menu-icon" large name="menu"></ion-icon>\n    </button>\n  </div>\n\n  <div id="float-button-right-top" *ngIf="!isSearching && !inStreetView()">\n    <button ion-button clear id="search-button" (click)="showSearch()">\n      <ion-icon name="search"></ion-icon>\n    </button>\n  </div>\n\n\n  <div *ngIf="isSearching" class="search">\n    <ion-searchbar showCancelButton\n                   [(ngModel)]="input"\n                   (ionInput)="searchPoints(input)"\n                   (ionCancel)="stopSearch($event)"\n                   placeholder="Search for a location"></ion-searchbar>\n\n    <ion-scroll class="scrollable" scrollY="true">\n      <ion-list>\n        <ion-item class="search-item" *ngFor="let location of searchList" (click)="addMarker(location)">\n          {{location.name}}\n        </ion-item>\n      </ion-list>\n    </ion-scroll>\n  </div>\n\n  <div *ngIf="searchingStart" class="search">\n    <ion-searchbar showCancelButton\n                   [(ngModel)]="input"\n                   (ionInput)="searchPoints(input)"\n                   (ionCancel)="searchStop($event)"\n                   placeholder="Select starting location"></ion-searchbar>\n\n    <ion-scroll class="scrollable" scrollY="true">\n      <ion-list>\n        <ion-item class="current-location" *ngIf="latLng" (click)="directFromCurrentLocation()">\n          <ion-icon name="locate"></ion-icon>\n          Current Location\n        </ion-item>\n        <ion-item class="search-item" *ngFor="let location of searchList" (click)="directFromLocation(location)">\n          {{location.name}}\n        </ion-item>\n      </ion-list>\n    </ion-scroll>\n  </div>\n\n  <div id="float-button-left-bottom">\n    <button *ngIf="isInfoWindowOpen && !inStreetView()" ion-fab mini (click)="searchStart()">\n      <ion-icon [name]="inRoute ? \'hand\' :\'navigate\'"></ion-icon>\n    </button>\n    <button *ngIf="!isSearching && !isInfoWindowOpen && !inStreetView()" ion-fab mini (click)="changeAllMarkers()">\n      <ion-icon [name]="changeIcon ? \'remove\' :\'add\'"></ion-icon>\n    </button>\n    <button *ngIf="!isSearching && !isInfoWindowOpen && !inStreetView()" ion-fab mini (click)="showCurrLocation()">\n      <ion-icon name="locate"></ion-icon>\n    </button>\n    <button *ngIf="(!isSearching && isInfoWindowOpen) || inStreetView()" ion-fab mini (click)="toggleStreetView()">\n      <ion-icon name="eye"></ion-icon>\n    </button>\n    <button *ngIf="!isSearching && !isInfoWindowOpen && !inStreetView()" ion-fab mini (click)="doFilter()">\n      <ion-icon name="funnel"></ion-icon>\n    </button>\n  </div>\n\n  <div #map id="map"></div>\n\n  <ion-select #filterSelect [(ngModel)]="filter" multiple="false" #C (ionChange)="filterMarker(C.value)" cancelText="Cancel"\n              okText="Filter">\n    <ion-option *ngFor="let item of typeList" value="{{item}}">{{item}}</ion-option>\n  </ion-select>\n\n</ion-content>\n'/*ion-inline-end:"/Users/chrisnguyenhi/Documents/git/Wayfinder/src/pages/map/map.html"*/,
     }),
-    __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_3_ionic_angular__["i" /* NavController */], __WEBPACK_IMPORTED_MODULE_3_ionic_angular__["j" /* NavParams */], __WEBPACK_IMPORTED_MODULE_3_ionic_angular__["g" /* LoadingController */], __WEBPACK_IMPORTED_MODULE_4__angular_http__["a" /* Http */], __WEBPACK_IMPORTED_MODULE_7__ionic_native_geolocation__["a" /* Geolocation */], __WEBPACK_IMPORTED_MODULE_8__services_distanceMatrixService_distanceMatrixService__["a" /* DistanceMatrixService */]])
+    __metadata("design:paramtypes", [typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_3_ionic_angular__["i" /* NavController */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3_ionic_angular__["i" /* NavController */]) === "function" && _c || Object, typeof (_d = typeof __WEBPACK_IMPORTED_MODULE_3_ionic_angular__["j" /* NavParams */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3_ionic_angular__["j" /* NavParams */]) === "function" && _d || Object, typeof (_e = typeof __WEBPACK_IMPORTED_MODULE_3_ionic_angular__["g" /* LoadingController */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3_ionic_angular__["g" /* LoadingController */]) === "function" && _e || Object, typeof (_f = typeof __WEBPACK_IMPORTED_MODULE_4__angular_http__["a" /* Http */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_4__angular_http__["a" /* Http */]) === "function" && _f || Object, typeof (_g = typeof __WEBPACK_IMPORTED_MODULE_7__ionic_native_geolocation__["a" /* Geolocation */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_7__ionic_native_geolocation__["a" /* Geolocation */]) === "function" && _g || Object, typeof (_h = typeof __WEBPACK_IMPORTED_MODULE_8__services_distanceMatrixService_distanceMatrixService__["a" /* DistanceMatrixService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_8__services_distanceMatrixService_distanceMatrixService__["a" /* DistanceMatrixService */]) === "function" && _h || Object])
 ], MapPage);
 
+var _a, _b, _c, _d, _e, _f, _g, _h;
 //# sourceMappingURL=map.js.map
 
 /***/ })
