@@ -1,13 +1,13 @@
-import { Component, ViewChild, ElementRef, Injectable } from '@angular/core';
-import { FIREBASE_CONFIG } from "./../../app.firebase.config";
+import {Component, ViewChild, ElementRef, Injectable} from '@angular/core';
+import {FIREBASE_CONFIG} from "./../../app.firebase.config";
 import * as firebase from 'firebase';
-import { IonicPage, NavController, NavParams, LoadingController, Select } from 'ionic-angular';
-import { Http } from '@angular/http';
+import {IonicPage, NavController, NavParams, LoadingController, Select} from 'ionic-angular';
+import {Http} from '@angular/http';
 import 'rxjs/add/operator/map';
-import { isNullOrUndefined } from "util";
+import {isNullOrUndefined} from "util";
 import * as Fuse from 'fuse.js';
-import { Geolocation } from '@ionic-native/geolocation';
-import { DistanceMatrixService } from '../../services/distanceMatrixService/distanceMatrixService'
+import {Geolocation} from '@ionic-native/geolocation';
+import {DistanceMatrixService} from '../../services/distanceMatrixService/distanceMatrixService'
 
 declare var google;
 let stash = []; // Array to contain Markers on the map
@@ -330,7 +330,6 @@ export class MapPage {
             this.searchingStart = true;
         }
         else {
-            console.log("hi");
             this.clearRoute();
             if (this.infoWindow) {
                 this.infoWindow.close();
@@ -350,6 +349,11 @@ export class MapPage {
         this.searchingStart = false;
         this.showCurrLocation();
     }
+
+    /*
+     * Creates direction display from users current location to the end location
+     * @param None
+     */
 
     directFromCurrentLocation() {
         this.searchingStart = false;
@@ -373,6 +377,13 @@ export class MapPage {
             }
         });
     }
+
+    /*
+     * Creates direction display from a given location to the end location
+     * @param {Object} location - Location being directed from
+     * @param {int} location.lat - Latitude of starting location
+     * @param {int} location.lng - Longitude of starting location
+     */
 
     directFromLocation(location) {
         this.searchingStart = false;
@@ -496,39 +507,22 @@ export class MapPage {
 
         this.map.setCenter({lat: 21.2969, lng: -157.8171});
         this.map.setZoom(15);
-
     }
 
-    changeAllMarkers() {
-        if (this.changeIcon === true) {
-            if (stash.length !== 0) {
-                for (let i = 0; i < stash.length; i++) {
-                    stash[i].setMap(null);
-                }
-                stash.length = 0;
-                this.changeIcon = false;
-            } else {
-                console.log('Stash array does not exist!');
-            }
-        } else if (this.changeIcon === false) {
-            this.changeIcon = true;
-            this.placeAllMarkers();
-        }
-    }
-
-    clearAllMarkers() {
-        if (stash) {
-            for (let i = 0; i < stash.length; i++) {
-                stash[i].setMap(null);
-            }
-            stash.length = 0;
-            this.changeIcon = false;
-        } else {
-            console.log('Stash array does not exist!');
-        }
-    }
+    /*
+     * Creates info window when a marker is selected or added
+     * @param {Object} location - Location that is selected
+     * @param {string} location.name - Name of the selected location
+     * @param {int} location.key - Key given to indexed location
+     * @param {string} location.description - Description of the selected location
+     * @param {string} location.address - Address of the selected location
+     * @param {string} location.number - Phone number of the selected location
+     *
+     * @return {Object} infoContent - HTML info window object to display
+     */
 
     getInfoWindowData(location) {
+        console.log(location);
         let imgSrc;
         let infoContent = '<div class="ui grid windowContainer">';
         if (location.name) {
@@ -599,8 +593,44 @@ export class MapPage {
                 console.log('Stash array does not exist!');
             }
         }, 2000);
-        }
+    }
 
+    /*
+     *  Called by HTML file that changes the state of the add / remove marker button
+     *      calls clearAllMarkers or placeAllMarkers based on state of the button
+     *  @param - None
+     */
+
+    changeAllMarkers() {
+        if (this.changeIcon === true) {
+            this.clearAllMarkers();
+        } else {
+            this.changeIcon = true;
+            this.placeAllMarkers();
+        }
+    }
+
+    /*
+     * Clears all data points on the map
+     * @param - None
+     */
+
+    clearAllMarkers() {
+        if (stash) {
+            for (let i = 0; i < stash.length; i++) {
+                stash[i].setMap(null);
+            }
+            stash.length = 0;
+            this.changeIcon = false;
+        } else {
+            console.log('Stash array does not exist!');
+        }
+    }
+
+    /*
+     * Places all data points on the map
+     * @param - None
+     */
 
     placeAllMarkers() {
         this.clearAllMarkers();
@@ -662,6 +692,10 @@ export class MapPage {
         }, 200000);
     }
 
+    /*
+     * Gets latitude and longitude of the users current location
+     * @param - None
+     */
 
     getLatLng() {
         if (this.currentLat && this.currentLng && !this.latLng) {
@@ -696,7 +730,11 @@ export class MapPage {
         }
     }
 
-    // Use HTML5 geolocation to get current lat/lng and place marker there
+    /*
+     * Places marker at users current latitude / longitude location using HTML5 geolocation
+     * @param - None
+     */
+
     showCurrLocation() {
         if (this.latLng) {
             this.userMarker.setMap(this.map);
@@ -739,6 +777,11 @@ export class MapPage {
         navigator.geolocation.clearWatch(this.navId);
         this.userMarker.setMap(null);
     }
+
+    /*
+     * Loads Google Maps API with custom features and styling
+     * @param - None
+     */
 
     loadMap() {
         this.map = new google.maps.Map(this.mapElement.nativeElement, {

@@ -1,14 +1,14 @@
 webpackJsonp([2],{
 
-/***/ 818:
+/***/ 654:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PointsPageModule", function() { return PointsPageModule; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ResetPasswordPageModule", function() { return ResetPasswordPageModule; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(38);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__points__ = __webpack_require__(823);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(30);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__reset_password__ = __webpack_require__(661);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -18,37 +18,33 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 
 
 
-let PointsPageModule = class PointsPageModule {
+let ResetPasswordPageModule = class ResetPasswordPageModule {
 };
-PointsPageModule = __decorate([
+ResetPasswordPageModule = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["L" /* NgModule */])({
         declarations: [
-            __WEBPACK_IMPORTED_MODULE_2__points__["a" /* PointsPage */],
+            __WEBPACK_IMPORTED_MODULE_2__reset_password__["a" /* ResetPasswordPage */],
         ],
         imports: [
-            __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["f" /* IonicPageModule */].forChild(__WEBPACK_IMPORTED_MODULE_2__points__["a" /* PointsPage */]),
+            __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["f" /* IonicPageModule */].forChild(__WEBPACK_IMPORTED_MODULE_2__reset_password__["a" /* ResetPasswordPage */]),
         ],
     })
-], PointsPageModule);
+], ResetPasswordPageModule);
 
-//# sourceMappingURL=points.module.js.map
+//# sourceMappingURL=reset-password.module.js.map
 
 /***/ }),
 
-/***/ 823:
+/***/ 661:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return PointsPage; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ResetPasswordPage; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(38);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_firebase__ = __webpack_require__(148);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_firebase___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_firebase__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_underscore_underscore__ = __webpack_require__(447);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_underscore_underscore___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_underscore_underscore__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__providers_auth_auth__ = __webpack_require__(110);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__login_login__ = __webpack_require__(236);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__providers_firebase_firebase__ = __webpack_require__(109);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(30);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__angular_forms__ = __webpack_require__(27);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__providers_auth_auth__ = __webpack_require__(87);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__validators_email__ = __webpack_require__(356);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -63,83 +59,55 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
-
-
-
-let PointsPage = class PointsPage {
-    constructor(navCtrl, navParams, loading, toast, authData, database) {
+let ResetPasswordPage = class ResetPasswordPage {
+    constructor(navCtrl, authProvider, formBuilder, alertCtrl) {
         this.navCtrl = navCtrl;
-        this.navParams = navParams;
-        this.loading = loading;
-        this.toast = toast;
-        this.authData = authData;
-        this.database = database;
-        this.name = this.navParams.get('name');
-        this.address = this.navParams.get('address');
-        this.number = this.navParams.get('number');
-        this.description = this.navParams.get('description');
-        this.key = String(this.navParams.get('key'));
-        if (this.navParams.get('key') > 163) {
-            this.image = "../../assets/images/uhLogo.jpg";
-        }
-        else {
-            if (!isNaN(this.navParams.get('key'))) {
-                this.image = "https://manoanow.org/app/map/images/" + this.key + ".png";
-            }
-            else {
-                this.image = "../../assets/images/uhLogo.jpg";
-            }
-        }
-        this.date = new Date();
-        this.showAdd = false;
-        this.user = __WEBPACK_IMPORTED_MODULE_2_firebase__["auth"]().currentUser;
-    }
-    ionViewDidLoad() {
-        this.showComments();
-    }
-    showComments() {
-        var item = [];
-        this.database.masterData.child(this.key).child("comments").once("value")
-            .then((dataPoints) => {
-            item = dataPoints.val();
-            this.comments = __WEBPACK_IMPORTED_MODULE_3_underscore_underscore__["toArray"](item);
+        this.authProvider = authProvider;
+        this.formBuilder = formBuilder;
+        this.alertCtrl = alertCtrl;
+        this.resetPasswordForm = formBuilder.group({
+            email: ['',
+                __WEBPACK_IMPORTED_MODULE_2__angular_forms__["f" /* Validators */].compose([__WEBPACK_IMPORTED_MODULE_2__angular_forms__["f" /* Validators */].required, __WEBPACK_IMPORTED_MODULE_4__validators_email__["a" /* EmailValidator */].isValid])],
         });
     }
-    addComments(formData) {
-        if (this.user) {
-            this.date = new Date().toString();
-            Object.assign(formData.value, { 'dateTime': this.date });
-            Object.assign(formData.value, { 'userName': this.user.displayName });
-            let comments = this.database.masterData.child(this.key);
-            comments.child('/comments').push(formData.value);
-            this.showComments();
-            this.toggleAddButton();
-            this.commentText.value = "";
+    resetPassword() {
+        if (!this.resetPasswordForm.valid) {
+            console.log(this.resetPasswordForm.value);
+        }
+        else {
+            this.authProvider.resetPassword(this.resetPasswordForm.value.email)
+                .then((user) => {
+                let alert = this.alertCtrl.create({
+                    message: "We sent you a reset link to your email",
+                    buttons: [
+                        {
+                            text: "Ok",
+                            role: 'cancel',
+                            handler: () => { this.navCtrl.pop(); }
+                        }
+                    ]
+                });
+                alert.present();
+            }, (error) => {
+                var errorMessage = error.message;
+                let errorAlert = this.alertCtrl.create({
+                    message: errorMessage,
+                    buttons: [{ text: "Ok", role: 'cancel' }]
+                });
+                errorAlert.present();
+            });
         }
     }
-    toggleAddButton() {
-        this.showAdd = !this.showAdd;
-    }
-    getDate(comment) {
-        return new Date(comment.dateTime).getMonth() + 1 + '/' + new Date(comment.dateTime).getDate() + '/' + new Date(comment.dateTime).getFullYear();
-    }
-    logIn() {
-        this.navCtrl.push(__WEBPACK_IMPORTED_MODULE_5__login_login__["a" /* LoginPage */]);
-    }
 };
-__decorate([
-    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_13" /* ViewChild */])('commentText'),
-    __metadata("design:type", Object)
-], PointsPage.prototype, "commentText", void 0);
-PointsPage = __decorate([
+ResetPasswordPage = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["e" /* IonicPage */])(),
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["n" /* Component */])({
-        selector: 'points-page',template:/*ion-inline-start:"/Users/chrisnguyenhi/Documents/git/Wayfinder/src/pages/points/points.html"*/'<ion-header>\n  <ion-navbar color="primary">\n    <button ion-button menuToggle>\n      <ion-icon name="menu"></ion-icon>\n    </button>\n    <ion-title>{{name}}</ion-title>\n  </ion-navbar>\n</ion-header>\n\n<ion-content padding>\n  <div center style="width: 100%; height: 100%;">\n    <ion-img center *ngIf="image" class="pointImage" src={{image}}></ion-img>\n    <div>\n      <br>\n      <h2 *ngIf="name && name.toLowerCase() != \'n/a\'">\n        {{name}}\n      </h2>\n      <div *ngIf="addess && address.toLowerCase() != \'n/a\'">\n        {{address}}\n      </div>\n      <div *ngIf="number && number.toLowerCase() != \'n/a\'">\n        {{number}}\n      </div>\n      <hr *ngIf="description && description.toLowerCase() != \'n/a\'">\n      <div *ngIf="description && description.toLowerCase() != \'n/a\'">\n        {{description}}\n        <hr>\n      </div>\n      <br>\n    </div>\n  </div>\n\n  <div>\n    <div *ngIf="comments">\n      <ion-card *ngFor="let comment of comments">\n        <ion-card-header>\n          <ion-item>\n            <ion-icon name="person"> {{ comment.userName }} </ion-icon>\n          </ion-item>\n        </ion-card-header>\n\n        <ion-card-content>\n          <div class="font">\n            {{ this.getDate(comment) }}\n          </div>\n          {{ comment.messages }}\n        </ion-card-content>\n      </ion-card>\n    </div>\n  </div>\n\n  <br>\n  <br>\n  <br>\n  <div *ngIf="showAdd">\n    <form #formData=\'ngForm\' (ngSubmit)="addComments(formData)">\n      <ion-label color="primary">Add a new comment</ion-label>\n      <ion-item>\n        <ion-input #commentText type="text" placeholder="Enter a comment" [(ngModel)]="messages" name="messages"></ion-input>\n      </ion-item>\n      <button ion-button type="submit" block>Submit</button>\n    </form>\n  </div>\n\n  <div *ngIf="user" style="display: flex;">\n    <button style="margin: auto;" ion-button (click)="toggleAddButton()">\n      Comment\n    </button>\n  </div>\n  <div *ngIf="!user" style="display: flex;">\n    <button style="margin: auto;" ion-button (click)="logIn()">\n      Log in to comment\n    </button>\n  </div>\n</ion-content>\n'/*ion-inline-end:"/Users/chrisnguyenhi/Documents/git/Wayfinder/src/pages/points/points.html"*/
+        selector: 'page-reset-password',template:/*ion-inline-start:"/Users/brendtmcfeeley/Documents/GitHub/Wayfinder/src/pages/reset-password/reset-password.html"*/'<ion-header>\n  <ion-navbar color="primary">\n    <button ion-button menuToggle>\n      <ion-icon name="menu"></ion-icon>\n    </button>\n    <ion-title>Reset Password</ion-title>\n  </ion-navbar>\n</ion-header>\n\n\n<ion-content padding>\n  <form [formGroup]="resetPasswordForm" (submit)="resetPassword()" novalidate>\n\n    <ion-item>\n      <ion-label stacked>Email</ion-label>\n      <ion-input #email formControlName="email" type="email" placeholder="Your email address"\n                 [class.invalid]="!resetPasswordForm.controls.email.valid &&\n          resetPasswordForm.controls.email.dirty"></ion-input>\n    </ion-item>\n    <ion-item class="error-message" *ngIf="!resetPasswordForm.controls.email.valid  &&\n      resetPasswordForm.controls.email.dirty">\n      <p>Please enter a valid email.</p>\n    </ion-item>\n\n<!--    <ion-item>\n      <ion-label stacked>Password</ion-label>\n      <ion-input #password formControlName="password" type="password" placeholder="Your password"\n                 [class.invalid]="!resetPasswordForm.controls.password.valid &&\n          resetPasswordForm.controls.password.dirty"></ion-input>\n    </ion-item>-->\n<!--    <ion-item class="error-message" *ngIf="!resetPasswordForm.controls.password.valid  &&\n      resetPasswordForm.controls.password.dirty">\n      <p>Your password needs more than 6 characters.</p>\n    </ion-item>-->\n\n    <button ion-button block type="submit">\n      Reset\n    </button>\n\n  </form>\n\n</ion-content>\n'/*ion-inline-end:"/Users/brendtmcfeeley/Documents/GitHub/Wayfinder/src/pages/reset-password/reset-password.html"*/,
     }),
-    __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["i" /* NavController */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["j" /* NavParams */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["g" /* LoadingController */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["m" /* ToastController */], __WEBPACK_IMPORTED_MODULE_4__providers_auth_auth__["a" /* AuthProvider */], __WEBPACK_IMPORTED_MODULE_6__providers_firebase_firebase__["a" /* FirebaseProvider */]])
-], PointsPage);
+    __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["i" /* NavController */], __WEBPACK_IMPORTED_MODULE_3__providers_auth_auth__["a" /* AuthProvider */], __WEBPACK_IMPORTED_MODULE_2__angular_forms__["a" /* FormBuilder */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["a" /* AlertController */]])
+], ResetPasswordPage);
 
-//# sourceMappingURL=points.js.map
+//# sourceMappingURL=reset-password.js.map
 
 /***/ })
 
