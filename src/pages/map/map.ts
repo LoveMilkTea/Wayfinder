@@ -625,7 +625,7 @@ export class MapPage {
         }
     }
 
-    addTimedEvent(event, description, image, lat, lng, time){
+    addTimedEvent(event, description, image, lat, lng, hours){
         let infoContent = '<div class="ui grid windowContainer">';
             infoContent += '<div id="windowHead">' + event + '</div>'
             infoContent += '<img class="ui fluid image info" src="' + image + '">'
@@ -633,7 +633,7 @@ export class MapPage {
             infoContent += '</div>';
 
         let miliseconds = 3.6e+6
-        let duration = miliseconds * time;
+        let duration = miliseconds * hours;
         this.infoWindow = new google.maps.InfoWindow({
             maxWidth: 400
         });
