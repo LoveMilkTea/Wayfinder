@@ -2070,7 +2070,6 @@ let MapPage = class MapPage {
         infoContent += '<div id="windowHead">' + event + '</div>';
         infoContent += '<img class="ui fluid image info" src="' + image + '">';
         infoContent += '<div id="windowDesc">' + description + '</div>';
-        infoContent += '<i id="infoIcon">' + '&#9432;' + '</i>';
         infoContent += '</div>';
         let miliseconds = 3.6e+6;
         let duration = miliseconds * time;
