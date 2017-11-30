@@ -11,7 +11,7 @@ import {FirebaseProvider} from "../../providers/firebase/firebase";
 
 declare var google;
 let stash = []; // Array to contain Markers on the map
-let timedStash = [];
+let eventStash = [];
 
 @Component({
     selector: 'page-map',
@@ -86,7 +86,7 @@ export class MapPage {
         this.loadTagData(); // Load all the data from firebase once
         this.loadMap();
         this.getLatLng();
-        this.placeTimedMarker();
+        this.addTimedEvent('UH End of Year Bash','A end of the year party for all UH Manoa students!', 'http://curvysewingcollective.com/wp-content/uploads/2017/10/CSC-Party-Time-400x400.png', 21.296967, -157.821814, 5);
     }
 
     searchPoints(input) {
@@ -590,15 +590,12 @@ export class MapPage {
         }, 2000);
     }
 
-
     placeAllMarkers() {
         this.clearAllMarkers();
 
         this.infoWindow = new google.maps.InfoWindow({
             maxWidth: 350
         });
-
-        this.placeTimedMarker();
 
         for (let i = 0, length = this.geoMarkers.length; i < length; i++) {
             let data = this.geoMarkers[i],
@@ -637,20 +634,55 @@ export class MapPage {
             this.map.setCenter({lat: 21.2969, lng: -157.8171});
             this.map.setZoom(15);
         }
+    }
+
+    addTimedEvent(event, description, image, lat, lng, hours){
+        let infoContent = '<div class="ui grid windowContainer">';
+            infoContent += '<div id="windowHead">' + event + '</div>'
+            infoContent += '<img class="ui fluid image info" src="' + image + '">'
+            infoContent += '<div id="windowDesc">' + description + '</div>'
+            infoContent += '</div>';
+
+        let miliseconds = 3.6e+6
+        let duration = miliseconds * hours;
+        this.infoWindow = new google.maps.InfoWindow({
+            maxWidth: 400
+        });
+
+        this.marker = new google.maps.Marker({
+            position: new google.maps.LatLng(lat, lng),
+            map: this.map,
+            title: event,
+            draggable: false,
+            animation: google.maps.Animation.DROP
+        });
+        eventStash.push(this.marker);
+
+        //http://themocracy.com/wp-content/uploads/2016/12/Parties.jpg used as a sample image
+        google.maps.event.addListener(this.marker, 'click', (() => {
+            this.infoWindow.setContent(infoContent);
+            this.isInfoWindowOpen = true;
+            this.marker.setPosition({lat: lat, lng: lng});
+            this.infoWindow.open(this.map, this.marker);
+        }))
+
+        google.maps.event.addListener(this.infoWindow, 'closeclick', (() => {
+            this.isInfoWindowOpen = false;
+        }));
+
         setTimeout(function () {
-            if (stash) {
-                for (let i = 0; i < stash.length; i++) {
-                    stash[i].setMap(null);
+            if (eventStash) {
+                for (let i = 0; i < eventStash.length; i++) {
+                    eventStash[i].setMap(null);
                 }
-                stash.length = 0;
+                eventStash.length = 0;
                 this.changeIcon = false;
             } else {
                 console.log('Stash array does not exist!');
             }
             // Markers disappear after 200000 seconds (proof of concept for timed events
-        }, 200000);
+        }, duration);
     }
-
 
     getLatLng() {
         if (this.currentLat && this.currentLng && !this.latLng) {

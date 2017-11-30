@@ -169,92 +169,17 @@ AuthProvider = __decorate([
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return AuthProvider; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_rxjs_add_operator_map__ = __webpack_require__(98);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_rxjs_add_operator_map___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_rxjs_add_operator_map__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_angularfire2_auth__ = __webpack_require__(117);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_firebase_app__ = __webpack_require__(40);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_firebase_app___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_firebase_app__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__models_user__ = __webpack_require__(417);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_rxjs_BehaviorSubject__ = __webpack_require__(418);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_rxjs_BehaviorSubject___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5_rxjs_BehaviorSubject__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__app_firebase_config__ = __webpack_require__(58);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_rxjs_add_observable_of__ = __webpack_require__(419);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_rxjs_add_observable_of___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_7_rxjs_add_observable_of__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8_rxjs_add_operator_switchMap__ = __webpack_require__(421);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8_rxjs_add_operator_switchMap___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_8_rxjs_add_operator_switchMap__);
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
+const FIREBASE_CONFIG = {
+    apiKey: "AIzaSyBwEarQZ-Z5DBO7UyZoxSUxYsdOVWJAh_I",
+    authDomain: "hacc2017-4c641.firebaseapp.com",
+    databaseURL: "https://hacc2017-4c641.firebaseio.com",
+    projectId: "hacc2017-4c641",
+    storageBucket: "",
+    messagingSenderId: "79619520095"
 };
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
+/* harmony export (immutable) */ __webpack_exports__["a"] = FIREBASE_CONFIG;
 
-
-
-
-
-
-
-
-
-let AuthProvider = class AuthProvider {
-    constructor(afAuth) {
-        this.afAuth = afAuth;
-        //used as a global variable to display different views for logged in users
-        //maybe change to behaviorsubject...
-        this.loginState = false;
-        this.user = new __WEBPACK_IMPORTED_MODULE_5_rxjs_BehaviorSubject__["BehaviorSubject"](null);
-        if (!__WEBPACK_IMPORTED_MODULE_3_firebase_app__["apps"].length) {
-            this.App = __WEBPACK_IMPORTED_MODULE_3_firebase_app__["initializeApp"](__WEBPACK_IMPORTED_MODULE_6__app_firebase_config__["a" /* FIREBASE_CONFIG */]);
-        }
-        else {
-            this.App = __WEBPACK_IMPORTED_MODULE_3_firebase_app__["app"]();
-        }
-        this.db = this.App.database();
-        this.ref = this.db.ref("users");
-    }
-    loginUser(newEmail, newPassword) {
-        return this.afAuth.auth.signInWithEmailAndPassword(newEmail, newPassword);
-    }
-    resetPassword(email) {
-        return this.afAuth.auth.sendPasswordResetEmail(email);
-    }
-    logoutUser() {
-        return this.afAuth.auth.signOut();
-    }
-    signupUser(newEmail, newPassword) {
-        return this.afAuth.auth.createUserWithEmailAndPassword(newEmail, newPassword);
-    }
-    createUser(newFirstName, newLastName) {
-        //updating the firebase default user accounts
-        var user = __WEBPACK_IMPORTED_MODULE_3_firebase_app__["auth"]().currentUser;
-        user.updateProfile({
-            displayName: `${newFirstName} ${newLastName}`,
-            photoURL: "",
-        }).then(() => {
-            //creates an entry in the user db with the same uid as the authenticated account
-            const userData = new __WEBPACK_IMPORTED_MODULE_4__models_user__["a" /* User */](user);
-            this.db.ref("users").child(user.uid).set(userData);
-        }).catch(function (error) {
-            console.log(error);
-        });
-    }
-    getUserRole() {
-        var user = __WEBPACK_IMPORTED_MODULE_3_firebase_app__["auth"]().currentUser;
-        return user;
-    }
-};
-AuthProvider = __decorate([
-    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["B" /* Injectable */])(),
-    __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_2_angularfire2_auth__["a" /* AngularFireAuth */]])
-], AuthProvider);
-
-//# sourceMappingURL=auth.js.map
+//# sourceMappingURL=app.firebase.config.js.map
 
 /***/ }),
 
@@ -280,6 +205,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+
 
 
 
@@ -349,14 +275,6 @@ let SubmitDataPage = class SubmitDataPage {
                 });
             });
         }
-        Object.assign(formData.value, { 'status': 'pending' });
-        this.childRef = this.ref.push();
-        this.childRef.set(formData.value);
-        this.toast.create({
-            message: `Your point has been submitted! Wait for admin approval.`,
-            duration: 3000
-        }).present();
-        this.navCtrl.setRoot(__WEBPACK_IMPORTED_MODULE_5__map_map__["a" /* MapPage */]);
     }
     getAddress() {
         this.url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${this.latitude},${this.longitude}&key=AIzaSyCeP_xxvneWjyU_0EIg5slVUl3I6TtH4oA`;
@@ -368,7 +286,7 @@ let SubmitDataPage = class SubmitDataPage {
 };
 SubmitDataPage = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["n" /* Component */])({
-        selector: 'submit-page',template:/*ion-inline-start:"/Users/tylerchong/Desktop/workspace/school/ics491/LoveMilkTea/src/pages/submit-data/submit-data.html"*/'<ion-header>\n  <ion-navbar color="primary">\n    <button ion-button menuToggle>\n      <ion-icon name="menu"></ion-icon>\n    </button>\n    <ion-title>Submit Data</ion-title>\n  </ion-navbar>\n</ion-header>\n\n<ion-content padding>\n<ion-list inset>\n  <form #formData=\'ngForm\'(ngSubmit)="onSubmit(formData)">\n    <ion-label>Point of Interest</ion-label>\n    <ion-item>\n      <ion-label color="primary">Name</ion-label>\n      <ion-input type="text" placeholder="Name" [(ngModel)]="pointName" name="pointName"></ion-input>\n    </ion-item>\n    <ion-item>\n      <ion-label color="primary">Latitude</ion-label>\n      <ion-input type="text" placeholder="Latitude" [(ngModel)]="latitude" name="latitude"></ion-input>\n    </ion-item>\n    <ion-item>\n      <ion-label color="primary">Longitude</ion-label>\n      <ion-input type="text" placeholder="Longitude"[(ngModel)]="longitude" name="longitude"></ion-input>\n    </ion-item>\n    <ion-item>\n    <ion-label color="primary">Address</ion-label>\n    <ion-input type="text" placeholder="Address"[(ngModel)]="address" name="address"></ion-input>\n  </ion-item>\n    <ion-item>\n      <ion-label color="primary">Phone</ion-label>\n      <ion-input type="tel" placeholder="Phone"[(ngModel)]="phone" name="phone"></ion-input>\n    </ion-item>\n    <ion-item>\n      <ion-label color="primary">Website</ion-label>\n      <ion-input type="url" placeholder="Website"[(ngModel)]="website" name="website"></ion-input>\n    </ion-item>\n\n      <ion-list>\n        <ion-label color="primary">Location Type</ion-label>\n        <ion-item>\n          <ion-select placeholder="Choose One"[(ngModel)]="type" name="type" cancelText="Nah" okText="Okay!">\n            <ion-option value="classroom">Classroom</ion-option>\n            <ion-option value="drink">Drink</ion-option>\n            <ion-option value="food">Food</ion-option>\n            <ion-option value="entertainment">Entertainment</ion-option>\n            <ion-option value="housing">Housing</ion-option>\n            <ion-option value="library">Library</ion-option>\n            <ion-option value="parking">Parking</ion-option>\n            <ion-option value="recreational">Recreational</ion-option>\n            <ion-option value="service">Service</ion-option>\n          </ion-select>\n        </ion-item>\n      </ion-list>\n\n    <ion-label>Contact Information</ion-label>\n    <ion-item>\n      <ion-label color="primary">First Name</ion-label>\n      <ion-input type="text" placeholder="First name" [(ngModel)]="firstName" name="firstName"></ion-input>\n    </ion-item>\n    <ion-item>\n      <ion-label color="primary">Last Name</ion-label>\n      <ion-input type="text" placeholder="Last name" [(ngModel)]="lastName" name="lastName"></ion-input>\n    </ion-item>\n    <ion-item>\n      <ion-label color="primary">Contact Email</ion-label>\n      <ion-input type="email" placeholder="Email" [(ngModel)]="email" name="email"></ion-input>\n    </ion-item>\n    <br/>\n\n    <ion-item>\n      <ion-label color="primary" stacked >Description</ion-label>\n      <ion-input type="text" placeholder="Description" [(ngModel)]="description" name="description"></ion-input>\n    </ion-item>\n    <ion-item>\n      <ion-label color="primary" stacked >Note to admin</ion-label>\n      <ion-input type="text" placeholder="Note to admin" [(ngModel)]="note" name="note"></ion-input>\n    </ion-item>\n    <button ion-button type="submit" block>Submit</button>\n  </form>\n</ion-list>\n</ion-content>\n'/*ion-inline-end:"/Users/tylerchong/Desktop/workspace/school/ics491/LoveMilkTea/src/pages/submit-data/submit-data.html"*/
+        selector: 'submit-page',template:/*ion-inline-start:"/Users/chrisnguyenhi/Documents/git/Wayfinder/src/pages/submit-data/submit-data.html"*/'<ion-header>\n  <ion-navbar color="primary">\n    <button ion-button menuToggle>\n      <ion-icon name="menu"></ion-icon>\n    </button>\n    <ion-title>Submit Data</ion-title>\n  </ion-navbar>\n</ion-header>\n\n<ion-content padding>\n<ion-list inset>\n  <form #formData=\'ngForm\'(ngSubmit)="onSubmit(formData)">\n    <ion-label>Point of Interest</ion-label>\n    <ion-item>\n      <ion-label color="primary">Name</ion-label>\n      <ion-input type="text" placeholder="Name" [(ngModel)]="pointName" name="pointName"></ion-input>\n    </ion-item>\n    <ion-item>\n      <ion-label color="primary">Latitude</ion-label>\n      <ion-input type="text" placeholder="Latitude" [(ngModel)]="latitude" name="latitude"></ion-input>\n    </ion-item>\n    <ion-item>\n      <ion-label color="primary">Longitude</ion-label>\n      <ion-input type="text" placeholder="Longitude"[(ngModel)]="longitude" name="longitude"></ion-input>\n    </ion-item>\n    <ion-item>\n    <ion-label color="primary">Address</ion-label>\n    <ion-input type="text" placeholder="Address"[(ngModel)]="address" name="address"></ion-input>\n  </ion-item>\n    <ion-item>\n      <ion-label color="primary">Phone</ion-label>\n      <ion-input type="tel" placeholder="Phone"[(ngModel)]="phone" name="phone"></ion-input>\n    </ion-item>\n    <ion-item>\n      <ion-label color="primary">Website</ion-label>\n      <ion-input type="url" placeholder="Website"[(ngModel)]="website" name="website"></ion-input>\n    </ion-item>\n\n      <ion-list>\n        <ion-label color="primary">Location Type</ion-label>\n        <ion-item>\n          <ion-select placeholder="Choose One"[(ngModel)]="type" name="type" cancelText="Nah" okText="Okay!">\n            <ion-option value="classroom">Classroom</ion-option>\n            <ion-option value="drink">Drink</ion-option>\n            <ion-option value="food">Food</ion-option>\n            <ion-option value="entertainment">Entertainment</ion-option>\n            <ion-option value="housing">Housing</ion-option>\n            <ion-option value="library">Library</ion-option>\n            <ion-option value="parking">Parking</ion-option>\n            <ion-option value="recreational">Recreational</ion-option>\n            <ion-option value="service">Service</ion-option>\n          </ion-select>\n        </ion-item>\n      </ion-list>\n\n    <ion-label>Contact Information</ion-label>\n    <ion-item>\n      <ion-label color="primary">First Name</ion-label>\n      <ion-input type="text" placeholder="First name" [(ngModel)]="firstName" name="firstName"></ion-input>\n    </ion-item>\n    <ion-item>\n      <ion-label color="primary">Last Name</ion-label>\n      <ion-input type="text" placeholder="Last name" [(ngModel)]="lastName" name="lastName"></ion-input>\n    </ion-item>\n    <ion-item>\n      <ion-label color="primary">Contact Email</ion-label>\n      <ion-input type="email" placeholder="Email" [(ngModel)]="email" name="email"></ion-input>\n    </ion-item>\n    <br/>\n\n    <ion-item>\n      <ion-label color="primary" stacked >Description</ion-label>\n      <ion-input type="text" placeholder="Description" [(ngModel)]="description" name="description"></ion-input>\n    </ion-item>\n    <ion-item>\n      <ion-label color="primary" stacked >Note to admin</ion-label>\n      <ion-input type="text" placeholder="Note to admin" [(ngModel)]="note" name="note"></ion-input>\n    </ion-item>\n    <button ion-button type="submit" block>Submit</button>\n  </form>\n</ion-list>\n</ion-content>\n'/*ion-inline-end:"/Users/chrisnguyenhi/Documents/git/Wayfinder/src/pages/submit-data/submit-data.html"*/
     }),
     __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["i" /* NavController */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["j" /* NavParams */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["g" /* LoadingController */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["m" /* ToastController */], __WEBPACK_IMPORTED_MODULE_3__angular_http__["a" /* Http */], __WEBPACK_IMPORTED_MODULE_5__providers_auth_auth__["a" /* AuthProvider */], __WEBPACK_IMPORTED_MODULE_6__providers_firebase_firebase__["a" /* FirebaseProvider */]])
 ], SubmitDataPage);
@@ -493,7 +411,7 @@ let LoginPage = class LoginPage {
 LoginPage = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["e" /* IonicPage */])(),
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["n" /* Component */])({
-        selector: 'page-login',template:/*ion-inline-start:"/Users/tylerchong/Desktop/workspace/school/ics491/LoveMilkTea/src/pages/login/login.html"*/'<ion-header>\n  <ion-navbar color="primary">\n    <button ion-button menuToggle>\n      <ion-icon name="menu"></ion-icon>\n    </button>\n    <ion-title>Login</ion-title>\n  </ion-navbar>\n</ion-header>\n\n\n<ion-content padding>\n  <form [formGroup]="loginForm" (submit)="loginUser()" novalidate>\n\n    <ion-item>\n      <ion-label stacked>Email</ion-label>\n      <ion-input #email formControlName="email" type="email" placeholder="Your email address"\n                 [class.invalid]="!loginForm.controls.email.valid &&\n          loginForm.controls.email.dirty"></ion-input>\n    </ion-item>\n    <ion-item class="error-message" *ngIf="!loginForm.controls.email.valid  &&\n      loginForm.controls.email.dirty">\n      <p>Please enter a valid email.</p>\n    </ion-item>\n\n    <ion-item>\n      <ion-label stacked>Password</ion-label>\n      <ion-input #password formControlName="password" type="password" placeholder="Your password"\n                 [class.invalid]="!loginForm.controls.password.valid &&\n          loginForm.controls.password.dirty"></ion-input>\n    </ion-item>\n    <ion-item class="error-message" *ngIf="!loginForm.controls.password.valid  &&\n      loginForm.controls.password.dirty">\n      <p>Your password needs more than 6 characters.</p>\n    </ion-item>\n\n    <button ion-button block type="submit">\n      Login\n    </button>\n  </form>\n\n\n  <button ion-button block clear (click)="goToResetPassword()">\n    I forgot my password 🙁\n  </button>\n\n  <button ion-button block clear (click)="createAccount()">\n    Create a new account\n  </button>\n\n</ion-content>\n'/*ion-inline-end:"/Users/tylerchong/Desktop/workspace/school/ics491/LoveMilkTea/src/pages/login/login.html"*/,
+        selector: 'page-login',template:/*ion-inline-start:"/Users/chrisnguyenhi/Documents/git/Wayfinder/src/pages/login/login.html"*/'<ion-header>\n  <ion-navbar color="primary">\n    <button ion-button menuToggle>\n      <ion-icon name="menu"></ion-icon>\n    </button>\n    <ion-title>Login</ion-title>\n  </ion-navbar>\n</ion-header>\n\n\n<ion-content padding>\n  <form [formGroup]="loginForm" (submit)="loginUser()" novalidate>\n\n    <ion-item>\n      <ion-label stacked>Email</ion-label>\n      <ion-input #email formControlName="email" type="email" placeholder="Your email address"\n                 [class.invalid]="!loginForm.controls.email.valid &&\n          loginForm.controls.email.dirty"></ion-input>\n    </ion-item>\n    <ion-item class="error-message" *ngIf="!loginForm.controls.email.valid  &&\n      loginForm.controls.email.dirty">\n      <p>Please enter a valid email.</p>\n    </ion-item>\n\n    <ion-item>\n      <ion-label stacked>Password</ion-label>\n      <ion-input #password formControlName="password" type="password" placeholder="Your password"\n                 [class.invalid]="!loginForm.controls.password.valid &&\n          loginForm.controls.password.dirty"></ion-input>\n    </ion-item>\n    <ion-item class="error-message" *ngIf="!loginForm.controls.password.valid  &&\n      loginForm.controls.password.dirty">\n      <p>Your password needs more than 6 characters.</p>\n    </ion-item>\n\n    <button ion-button block type="submit">\n      Login\n    </button>\n  </form>\n\n\n  <button ion-button block clear (click)="goToResetPassword()">\n    I forgot my password 🙁\n  </button>\n\n  <button ion-button block clear (click)="createAccount()">\n    Create a new account\n  </button>\n\n</ion-content>\n'/*ion-inline-end:"/Users/chrisnguyenhi/Documents/git/Wayfinder/src/pages/login/login.html"*/,
     }),
     __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_2__providers_auth_auth__["a" /* AuthProvider */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["a" /* AlertController */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["i" /* NavController */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["g" /* LoadingController */], __WEBPACK_IMPORTED_MODULE_3__angular_forms__["a" /* FormBuilder */], __WEBPACK_IMPORTED_MODULE_7__providers_firebase_firebase__["a" /* FirebaseProvider */]])
 ], LoginPage);
@@ -557,6 +475,7 @@ let ExplorePage = class ExplorePage {
             alert('Location blocked, please try again.');
         }
     }
+    //DOES MAPTO FIRST
     mapTo(value) {
         this.navCtrl.push(__WEBPACK_IMPORTED_MODULE_2__map_map__["a" /* MapPage */], {
             locationIndex: value.toString(),
@@ -621,11 +540,12 @@ let ExplorePage = class ExplorePage {
 ExplorePage = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["e" /* IonicPage */])(),
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["n" /* Component */])({
-        selector: 'page-explore',template:/*ion-inline-start:"/Users/tylerchong/Desktop/workspace/school/ics491/LoveMilkTea/src/pages/explore/explore.html"*/'<ion-header>\n  <ion-navbar color="primary">\n    <button ion-button menuToggle>\n      <ion-icon name="menu"></ion-icon>\n    </button>\n    <ion-title>Explore</ion-title>\n  </ion-navbar>\n</ion-header>\n\n\n<ion-content>\n  <ion-card>\n    <div class="imgContainer" (click)="showLocation(147)">\n      <div id="wrc">\n        <div class="card-title">Warrior Rec Center</div>\n      </div>\n\n      <ion-fab right top>\n        <button ion-fab>\n          <ion-icon name="basketball"></ion-icon>\n        </button>\n      </ion-fab>\n    </div>\n\n    <ion-card-content>\n      <p class="description">The Warrior Rec Center is approximately 66,000 sq ft and is considered to be one of the\n        best recreational facilities in the state.</p>\n    </ion-card-content>\n\n    <ion-item>\n      <div class="dd" *ngIf="hasCurrLocation()">\n        <span item-left>{{dur[0]}}</span>\n        <span item-left>{{dist[0]}}</span>\n      </div>\n      <button ion-button icon-left clear item-end (click)="mapTo(147)" *ngIf="hasCurrLocation()">\n        <ion-icon name="navigate"></ion-icon>\n        Start\n      </button>\n    </ion-item>\n  </ion-card>\n\n  <ion-card>\n    <div class="imgContainer" (click)="showLocation(2)">\n      <div id="cc">\n        <div class="card-title">Campus Center</div>\n      </div>\n\n      <ion-fab right top>\n        <button ion-fab>\n          <ion-icon name="pizza"></ion-icon>\n        </button>\n      </ion-fab>\n    </div>\n\n    <ion-card-content>\n      <p class="description">The campus center offers the university community and the public a wide variety of meeting,\n        dining and entertainment options to enrich campus life and the educational experience.\n        It is the primary venue for programs and events to create an environment where individuals can come and relax,\n        study and be entertained or challenged.</p>\n    </ion-card-content>\n\n    <ion-item>\n      <div class="dd" *ngIf="hasCurrLocation()">\n        <span item-left>{{dur[1]}}</span>\n        <span item-left>{{dist[1]}}</span>\n      </div>\n      <button ion-button icon-left clear item-end (click)="mapTo(2)" *ngIf="hasCurrLocation()">\n        <ion-icon name="navigate"></ion-icon>\n        Start\n      </button>\n    </ion-item>\n  </ion-card>\n\n  <ion-card>\n    <div class="imgContainer" (click)="showLocation(3)">\n      <div id="hamilton">\n        <div class="card-title">Hamilton Library</div>\n      </div>\n\n      <ion-fab right top>\n        <button ion-fab>\n          <ion-icon name="book"></ion-icon>\n        </button>\n      </ion-fab>\n    </div>\n\n    <ion-card-content>\n      <p class="description">The Hamilton Library at the University of Hawaiʻi at Mānoa is the largest research library\n        in the state of Hawaii. The Library serves as a key resource for the flagship Manoa campus as well as the other\n        University of Hawaii system campuses.</p>\n    </ion-card-content>\n\n    <ion-item>\n      <div class="dd" *ngIf="hasCurrLocation()">\n        <span item-left>{{dur[2]}}</span>\n        <span item-left>{{dist[2]}}</span>\n      </div>\n      <button ion-button icon-left clear item-end (click)="mapTo(3)" *ngIf="hasCurrLocation()">\n        <ion-icon name="navigate"></ion-icon>\n        Start\n      </button>\n    </ion-item>\n  </ion-card>\n\n  <ion-card>\n    <div class="imgContainer" (click)="showLocation(130)">\n      <div id="stan-sheriff">\n        <div class="card-title">Stan Sheriff</div>\n      </div>\n\n      <ion-fab right top>\n        <button ion-fab>\n          <ion-icon name="beer"></ion-icon>\n        </button>\n      </ion-fab>\n    </div>\n\n    <ion-card-content>\n      <p class="description">The Stan Sheriff Center opened in 1994 and is the jewel of the Athletics Department. The\n        center has served as the home of the University of Hawai‘i men’s and women’s basketball and volleyball teams and\n        has played host to a number of memorable events.</p>\n    </ion-card-content>\n\n    <ion-item>\n      <div class="dd" *ngIf="hasCurrLocation()">\n        <span item-left>{{dur[3]}}</span>\n        <span item-left>{{dist[3]}}</span>\n      </div>\n      <button ion-button icon-left clear item-end (click)="mapTo(130)" *ngIf="hasCurrLocation()">\n        <ion-icon name="navigate"></ion-icon>\n        Start\n      </button>\n    </ion-item>\n  </ion-card>\n\n  <ion-card>\n    <div class="imgContainer" (click)="showLocation(15)">\n      <div id="kennedy-theatre">\n        <div class="card-title">Kennedy Theatre</div>\n      </div>\n\n      <ion-fab right top>\n        <button ion-fab>\n          <ion-icon name="people"></ion-icon>\n        </button>\n      </ion-fab>\n    </div>\n\n    <ion-card-content>\n      <p class="description">The Kennedy Theatre at the University of Hawai‘i at Manoa is the home base for the\n        productions of the Department of Theatre + Dance.</p>\n    </ion-card-content>\n\n    <ion-item>\n      <div class="dd" *ngIf="hasCurrLocation()">\n        <span item-left>{{dur[4]}}</span>\n        <span item-left>{{dist[4]}}</span>\n      </div>\n      <button ion-button icon-left clear item-end (click)="mapTo(15)" *ngIf="hasCurrLocation()">\n        <ion-icon name="navigate"></ion-icon>\n        Start\n      </button>\n    </ion-item>\n  </ion-card>\n\n  <ion-card>\n    <div class="imgContainer" (click)="showLocation(20)">\n      <div id="paradise-palms">\n        <div class="card-title">Paradise Palms Café</div>\n      </div>\n\n      <ion-fab right top>\n        <button ion-fab>\n          <ion-icon name="pizza"></ion-icon>\n        </button>\n      </ion-fab>\n    </div>\n\n    <ion-card-content>\n      <p class="description">The Paradise Palms Café features six food vendors, an air-conditioned dining room, and an\n        outdoor eating area.</p>\n    </ion-card-content>\n\n    <ion-item>\n      <div class="dd" *ngIf="hasCurrLocation()">\n        <span item-left>{{dur[5]}}</span>\n        <span item-left>{{dist[5]}}</span>\n      </div>\n      <button ion-button icon-left clear item-end (click)="mapTo(20)" *ngIf="hasCurrLocation()">\n        <ion-icon name="navigate"></ion-icon>\n        Start\n      </button>\n    </ion-item>\n  </ion-card>\n\n  <ion-card>\n    <div class="imgContainer" (click)="showLocation(151)">\n      <div id="qlc">\n        <div class="card-title-2">Queen Lili\'uokalani Center</div>\n      </div>\n\n      <ion-fab right top>\n        <button ion-fab>\n          <ion-icon name="person"></ion-icon>\n        </button>\n      </ion-fab>\n    </div>\n\n    <ion-card-content>\n      <p class="description">The Queen Lili\'uokalani Center, often called QLC, is a center for various student services, including the Office of Admissions, Office of the Registrar, Commuter Services, Financial Aid Services, Mānoa Advising Center, and much more.</p>\n    </ion-card-content>\n\n    <ion-item>\n      <div class="dd" *ngIf="hasCurrLocation()">\n        <span item-left>{{dur[6]}}</span>\n        <span item-left>{{dist[6]}}</span>\n      </div>\n      <button ion-button icon-left clear item-end (click)="mapTo(151)" *ngIf="hasCurrLocation()">\n        <ion-icon name="navigate"></ion-icon>\n        Start\n      </button>\n    </ion-item>\n  </ion-card>\n\n  <ion-card>\n    <div class="imgContainer" (click)="showLocation(4)">\n      <div id="sinclair">\n        <div class="card-title">Sinclair Library</div>\n      </div>\n\n      <ion-fab right top>\n        <button ion-fab>\n          <ion-icon name="book"></ion-icon>\n        </button>\n      </ion-fab>\n    </div>\n\n    <ion-card-content>\n      <p class="description">Sinclair Library, a popular place for late-night studying, is the only library open 24 hours on weekdays.</p>\n    </ion-card-content>\n\n    <ion-item>\n      <div class="dd" *ngIf="hasCurrLocation()">\n        <span item-left>{{dur[7]}}</span>\n        <span item-left>{{dist[7]}}</span>\n      </div>\n      <button ion-button icon-left clear item-end (click)="mapTo(4)" *ngIf="hasCurrLocation()">\n        <ion-icon name="navigate"></ion-icon>\n        Start\n      </button>\n    </ion-item>\n  </ion-card>\n\n  <ion-card>\n    <div class="imgContainer" (click)="showLocation(7)">\n      <div id="uhs">\n        <div class="card-title-2">University Health Services</div>\n      </div>\n\n      <ion-fab right top>\n        <button ion-fab>\n          <ion-icon name="medkit"></ion-icon>\n        </button>\n      </ion-fab>\n    </div>\n\n    <ion-card-content>\n      <p class="description">The University Health Services Mānoa offers a wide range of medical services and programs. These include general medical care by appointment or on a walk-in basis; women\'s health, sports medicine, psychiatry, dermatology, and nutrition clinics by appointment</p>\n    </ion-card-content>\n\n    <ion-item>\n      <div class="dd" *ngIf="hasCurrLocation()">\n        <span item-left>{{dur[8]}}</span>\n        <span item-left>{{dist[8]}}</span>\n      </div>\n      <button ion-button icon-left clear item-end (click)="mapTo(7)" *ngIf="hasCurrLocation()">\n        <ion-icon name="navigate"></ion-icon>\n        Start\n      </button>\n    </ion-item>\n  </ion-card>\n\n</ion-content>\n'/*ion-inline-end:"/Users/tylerchong/Desktop/workspace/school/ics491/LoveMilkTea/src/pages/explore/explore.html"*/,
+        selector: 'page-explore',template:/*ion-inline-start:"/Users/chrisnguyenhi/Documents/git/Wayfinder/src/pages/explore/explore.html"*/'<ion-header>\n  <ion-navbar color="primary">\n    <button ion-button menuToggle>\n      <ion-icon name="menu"></ion-icon>\n    </button>\n    <ion-title>Explore</ion-title>\n  </ion-navbar>\n</ion-header>\n\n\n<ion-content>\n  <ion-card>\n    <div class="imgContainer" (click)="showLocation(147)">\n      <div id="wrc">\n        <div class="card-title">Warrior Rec Center</div>\n      </div>\n\n      <ion-fab right top>\n        <button ion-fab>\n          <ion-icon name="basketball"></ion-icon>\n        </button>\n      </ion-fab>\n    </div>\n\n    <ion-card-content>\n      <p class="description">The Warrior Rec Center is approximately 66,000 sq ft and is considered to be one of the\n        best recreational facilities in the state.</p>\n    </ion-card-content>\n\n    <ion-item>\n      <div class="dd" *ngIf="hasCurrLocation()">\n        <span item-left>{{dur[0]}}</span>\n        <span item-left>{{dist[0]}}</span>\n      </div>\n      <button ion-button icon-left clear item-end (click)="mapTo(147)" *ngIf="hasCurrLocation()">\n        <ion-icon name="navigate"></ion-icon>\n        Start\n      </button>\n    </ion-item>\n  </ion-card>\n\n  <ion-card>\n    <div class="imgContainer" (click)="showLocation(2)">\n      <div id="cc">\n        <div class="card-title">Campus Center</div>\n      </div>\n\n      <ion-fab right top>\n        <button ion-fab>\n          <ion-icon name="pizza"></ion-icon>\n        </button>\n      </ion-fab>\n    </div>\n\n    <ion-card-content>\n      <p class="description">The campus center offers the university community and the public a wide variety of meeting,\n        dining and entertainment options to enrich campus life and the educational experience.\n        It is the primary venue for programs and events to create an environment where individuals can come and relax,\n        study and be entertained or challenged.</p>\n    </ion-card-content>\n\n    <ion-item>\n      <div class="dd" *ngIf="hasCurrLocation()">\n        <span item-left>{{dur[1]}}</span>\n        <span item-left>{{dist[1]}}</span>\n      </div>\n      <button ion-button icon-left clear item-end (click)="mapTo(2)" *ngIf="hasCurrLocation()">\n        <ion-icon name="navigate"></ion-icon>\n        Start\n      </button>\n    </ion-item>\n  </ion-card>\n\n  <ion-card>\n    <div class="imgContainer" (click)="showLocation(3)">\n      <div id="hamilton">\n        <div class="card-title">Hamilton Library</div>\n      </div>\n\n      <ion-fab right top>\n        <button ion-fab>\n          <ion-icon name="book"></ion-icon>\n        </button>\n      </ion-fab>\n    </div>\n\n    <ion-card-content>\n      <p class="description">The Hamilton Library at the University of Hawaiʻi at Mānoa is the largest research library\n        in the state of Hawaii. The Library serves as a key resource for the flagship Manoa campus as well as the other\n        University of Hawaii system campuses.</p>\n    </ion-card-content>\n\n    <ion-item>\n      <div class="dd" *ngIf="hasCurrLocation()">\n        <span item-left>{{dur[2]}}</span>\n        <span item-left>{{dist[2]}}</span>\n      </div>\n      <button ion-button icon-left clear item-end (click)="mapTo(3)" *ngIf="hasCurrLocation()">\n        <ion-icon name="navigate"></ion-icon>\n        Start\n      </button>\n    </ion-item>\n  </ion-card>\n\n  <ion-card>\n    <div class="imgContainer" (click)="showLocation(130)">\n      <div id="stan-sheriff">\n        <div class="card-title">Stan Sheriff</div>\n      </div>\n\n      <ion-fab right top>\n        <button ion-fab>\n          <ion-icon name="beer"></ion-icon>\n        </button>\n      </ion-fab>\n    </div>\n\n    <ion-card-content>\n      <p class="description">The Stan Sheriff Center opened in 1994 and is the jewel of the Athletics Department. The\n        center has served as the home of the University of Hawai‘i men’s and women’s basketball and volleyball teams and\n        has played host to a number of memorable events.</p>\n    </ion-card-content>\n\n    <ion-item>\n      <div class="dd" *ngIf="hasCurrLocation()">\n        <span item-left>{{dur[3]}}</span>\n        <span item-left>{{dist[3]}}</span>\n      </div>\n      <button ion-button icon-left clear item-end (click)="mapTo(130)" *ngIf="hasCurrLocation()">\n        <ion-icon name="navigate"></ion-icon>\n        Start\n      </button>\n    </ion-item>\n  </ion-card>\n\n  <ion-card>\n    <div class="imgContainer" (click)="showLocation(15)">\n      <div id="kennedy-theatre">\n        <div class="card-title">Kennedy Theatre</div>\n      </div>\n\n      <ion-fab right top>\n        <button ion-fab>\n          <ion-icon name="people"></ion-icon>\n        </button>\n      </ion-fab>\n    </div>\n\n    <ion-card-content>\n      <p class="description">The Kennedy Theatre at the University of Hawai‘i at Manoa is the home base for the\n        productions of the Department of Theatre + Dance.</p>\n    </ion-card-content>\n\n    <ion-item>\n      <div class="dd" *ngIf="hasCurrLocation()">\n        <span item-left>{{dur[4]}}</span>\n        <span item-left>{{dist[4]}}</span>\n      </div>\n      <button ion-button icon-left clear item-end (click)="mapTo(15)" *ngIf="hasCurrLocation()">\n        <ion-icon name="navigate"></ion-icon>\n        Start\n      </button>\n    </ion-item>\n  </ion-card>\n\n  <ion-card>\n    <div class="imgContainer" (click)="showLocation(20)">\n      <div id="paradise-palms">\n        <div class="card-title">Paradise Palms Café</div>\n      </div>\n\n      <ion-fab right top>\n        <button ion-fab>\n          <ion-icon name="pizza"></ion-icon>\n        </button>\n      </ion-fab>\n    </div>\n\n    <ion-card-content>\n      <p class="description">The Paradise Palms Café features six food vendors, an air-conditioned dining room, and an\n        outdoor eating area.</p>\n    </ion-card-content>\n\n    <ion-item>\n      <div class="dd" *ngIf="hasCurrLocation()">\n        <span item-left>{{dur[5]}}</span>\n        <span item-left>{{dist[5]}}</span>\n      </div>\n      <button ion-button icon-left clear item-end (click)="mapTo(20)" *ngIf="hasCurrLocation()">\n        <ion-icon name="navigate"></ion-icon>\n        Start\n      </button>\n    </ion-item>\n  </ion-card>\n\n  <ion-card>\n    <div class="imgContainer" (click)="showLocation(151)">\n      <div id="qlc">\n        <div class="card-title-2">Queen Lili\'uokalani Center</div>\n      </div>\n\n      <ion-fab right top>\n        <button ion-fab>\n          <ion-icon name="person"></ion-icon>\n        </button>\n      </ion-fab>\n    </div>\n\n    <ion-card-content>\n      <p class="description">The Queen Lili\'uokalani Center, often called QLC, is a center for various student services, including the Office of Admissions, Office of the Registrar, Commuter Services, Financial Aid Services, Mānoa Advising Center, and much more.</p>\n    </ion-card-content>\n\n    <ion-item>\n      <div class="dd" *ngIf="hasCurrLocation()">\n        <span item-left>{{dur[6]}}</span>\n        <span item-left>{{dist[6]}}</span>\n      </div>\n      <button ion-button icon-left clear item-end (click)="mapTo(151)" *ngIf="hasCurrLocation()">\n        <ion-icon name="navigate"></ion-icon>\n        Start\n      </button>\n    </ion-item>\n  </ion-card>\n\n  <ion-card>\n    <div class="imgContainer" (click)="showLocation(4)">\n      <div id="sinclair">\n        <div class="card-title">Sinclair Library</div>\n      </div>\n\n      <ion-fab right top>\n        <button ion-fab>\n          <ion-icon name="book"></ion-icon>\n        </button>\n      </ion-fab>\n    </div>\n\n    <ion-card-content>\n      <p class="description">Sinclair Library, a popular place for late-night studying, is the only library open 24 hours on weekdays.</p>\n    </ion-card-content>\n\n    <ion-item>\n      <div class="dd" *ngIf="hasCurrLocation()">\n        <span item-left>{{dur[7]}}</span>\n        <span item-left>{{dist[7]}}</span>\n      </div>\n      <button ion-button icon-left clear item-end (click)="mapTo(4)" *ngIf="hasCurrLocation()">\n        <ion-icon name="navigate"></ion-icon>\n        Start\n      </button>\n    </ion-item>\n  </ion-card>\n\n  <ion-card>\n    <div class="imgContainer" (click)="showLocation(7)">\n      <div id="uhs">\n        <div class="card-title-2">University Health Services</div>\n      </div>\n\n      <ion-fab right top>\n        <button ion-fab>\n          <ion-icon name="medkit"></ion-icon>\n        </button>\n      </ion-fab>\n    </div>\n\n    <ion-card-content>\n      <p class="description">The University Health Services Mānoa offers a wide range of medical services and programs. These include general medical care by appointment or on a walk-in basis; women\'s health, sports medicine, psychiatry, dermatology, and nutrition clinics by appointment</p>\n    </ion-card-content>\n\n    <ion-item>\n      <div class="dd" *ngIf="hasCurrLocation()">\n        <span item-left>{{dur[8]}}</span>\n        <span item-left>{{dist[8]}}</span>\n      </div>\n      <button ion-button icon-left clear item-end (click)="mapTo(7)" *ngIf="hasCurrLocation()">\n        <ion-icon name="navigate"></ion-icon>\n        Start\n      </button>\n    </ion-item>\n  </ion-card>\n\n</ion-content>\n'/*ion-inline-end:"/Users/chrisnguyenhi/Documents/git/Wayfinder/src/pages/explore/explore.html"*/,
     }),
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["B" /* Injectable */])(),
     __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["i" /* NavController */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["j" /* NavParams */], __WEBPACK_IMPORTED_MODULE_3__angular_http__["a" /* Http */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["g" /* LoadingController */]])
 ], ExplorePage);
+
 //# sourceMappingURL=explore.js.map
 
 /***/ }),
@@ -695,6 +615,7 @@ webpackAsyncContext.id = 289;
 module.exports = webpackAsyncContext;
 
 /***/ }),
+
 /***/ 332:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -712,6 +633,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+
 
 let DistanceMatrixService = class DistanceMatrixService {
     constructor() {
@@ -765,6 +687,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 
+
+
+
+
+
 let SubmitDataLandingPage = class SubmitDataLandingPage {
     constructor(navCtrl, loading, toast, http) {
         this.navCtrl = navCtrl;
@@ -784,7 +711,7 @@ let SubmitDataLandingPage = class SubmitDataLandingPage {
 };
 SubmitDataLandingPage = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["n" /* Component */])({
-        selector: 'submit-data-landing-page',template:/*ion-inline-start:"/Users/tylerchong/Desktop/workspace/school/ics491/LoveMilkTea/src/pages/submit-data-landing/submit-data-landing.html"*/'<ion-header>\n  <ion-navbar color="primary">\n    <button ion-button menuToggle>\n      <ion-icon name="menu"></ion-icon>\n    </button>\n    <ion-title>Submit Data</ion-title>\n  </ion-navbar>\n\n</ion-header>\n\n\n<ion-content padding>\n    <div style="display: flex; justify-content: center;">\n      <img src="../assets/images/icon.png">\n    </div>\n    <button class="btn" ion-button full (click)="goMainPage()">\n      Use Current Location\n    </button>\n    <button class="btn" ion-button full (click)="goMap()">\n      Browse Map\n    </button>\n</ion-content>\n'/*ion-inline-end:"/Users/tylerchong/Desktop/workspace/school/ics491/LoveMilkTea/src/pages/submit-data-landing/submit-data-landing.html"*/
+        selector: 'submit-data-landing-page',template:/*ion-inline-start:"/Users/chrisnguyenhi/Documents/git/Wayfinder/src/pages/submit-data-landing/submit-data-landing.html"*/'<ion-header>\n  <ion-navbar color="primary">\n    <button ion-button menuToggle>\n      <ion-icon name="menu"></ion-icon>\n    </button>\n    <ion-title>Submit Data</ion-title>\n  </ion-navbar>\n\n</ion-header>\n\n\n<ion-content padding>\n    <div style="display: flex; justify-content: center;">\n      <img src="../assets/images/icon.png">\n    </div>\n    <button class="btn" ion-button full (click)="goMainPage()">\n      Use Current Location\n    </button>\n    <button class="btn" ion-button full (click)="goMap()">\n      Browse Map\n    </button>\n</ion-content>\n'/*ion-inline-end:"/Users/chrisnguyenhi/Documents/git/Wayfinder/src/pages/submit-data-landing/submit-data-landing.html"*/
     }),
     __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["i" /* NavController */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["g" /* LoadingController */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["m" /* ToastController */], __WEBPACK_IMPORTED_MODULE_2__angular_http__["a" /* Http */]])
 ], SubmitDataLandingPage);
@@ -1153,7 +1080,7 @@ __decorate([
 ], SubmitDataChooseCoordsPage.prototype, "mapElement", void 0);
 SubmitDataChooseCoordsPage = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["n" /* Component */])({
-        selector: 'submit-data-coords-page',template:/*ion-inline-start:"/Users/tylerchong/Desktop/workspace/school/ics491/LoveMilkTea/src/pages/submit-data-choose-coords/submit-data-choose-cords.html"*/'<ion-header>\n  <ion-navbar color="primary">\n    <button ion-button menuToggle>\n      <ion-icon name="menu"></ion-icon>\n    </button>\n    <ion-title>Submit Data</ion-title>\n  </ion-navbar>\n\n</ion-header>\n\n\n<ion-content padding>\n  <h1>Find Coordinates</h1>\n  <div #map id="map"></div>\n</ion-content>\n'/*ion-inline-end:"/Users/tylerchong/Desktop/workspace/school/ics491/LoveMilkTea/src/pages/submit-data-choose-coords/submit-data-choose-cords.html"*/
+        selector: 'submit-data-coords-page',template:/*ion-inline-start:"/Users/chrisnguyenhi/Documents/git/Wayfinder/src/pages/submit-data-choose-coords/submit-data-choose-cords.html"*/'<ion-header>\n  <ion-navbar color="primary">\n    <button ion-button menuToggle>\n      <ion-icon name="menu"></ion-icon>\n    </button>\n    <ion-title>Submit Data</ion-title>\n  </ion-navbar>\n\n</ion-header>\n\n\n<ion-content padding>\n  <h1>Find Coordinates</h1>\n  <div #map id="map"></div>\n</ion-content>\n'/*ion-inline-end:"/Users/chrisnguyenhi/Documents/git/Wayfinder/src/pages/submit-data-choose-coords/submit-data-choose-cords.html"*/
     }),
     __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["i" /* NavController */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["a" /* AlertController */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["g" /* LoadingController */], __WEBPACK_IMPORTED_MODULE_2__angular_http__["a" /* Http */]])
 ], SubmitDataChooseCoordsPage);
@@ -1161,7 +1088,6 @@ SubmitDataChooseCoordsPage = __decorate([
 //# sourceMappingURL=submit-data-choose-coords.js.map
 
 /***/ }),
-
 
 /***/ 436:
 /***/ (function(module, exports) {
@@ -1243,6 +1169,26 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 let AppModule = class AppModule {
 };
@@ -1430,7 +1376,7 @@ __decorate([
     __metadata("design:type", __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["h" /* Nav */])
 ], App.prototype, "nav", void 0);
 App = __decorate([
-    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["n" /* Component */])({template:/*ion-inline-start:"/Users/tylerchong/Desktop/workspace/school/ics491/LoveMilkTea/src/app/app.html"*/'<ion-menu [content]="content">\n\n  <ion-content>\n    <img src="../assets/images/logo.jpg">\n    <hr>\n    <ion-list class="item">\n      <button menuClose ion-item *ngFor="let p of pages" (click)="openPage(p)">\n        <ion-icon class="menu-icon" name="{{ p.icon }}"></ion-icon>\n        {{p.title}}\n      </button>\n      <button menuClose ion-item  *ngIf="authData.loginState" (click)="logOut()">\n        <ion-icon class="menu-icon" name="person"></ion-icon>\n        Log Out\n      </button>\n      <button menuClose ion-item  *ngIf="!authData.loginState" (click)="logIn()">\n        <ion-icon class="menu-icon" name="person"></ion-icon>\n        Log In\n      </button>\n    </ion-list>\n    <button center menuClose ion-item class="user" *ngIf="authData.loginState" (click)="adminPage()">\n      You are logged in as {{currentUser.displayName}}\n    </button>\n  </ion-content>\n</ion-menu>\n\n<!-- Disable swipe-to-go-back because it\'s poor UX to combine STGB with side menus -->\n<ion-nav [root]="rootPage" #content swipeBackEnabled="false"></ion-nav>\n'/*ion-inline-end:"/Users/tylerchong/Desktop/workspace/school/ics491/LoveMilkTea/src/app/app.html"*/
+    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["n" /* Component */])({template:/*ion-inline-start:"/Users/chrisnguyenhi/Documents/git/Wayfinder/src/app/app.html"*/'<ion-menu [content]="content">\n\n  <ion-content>\n    <img src="../assets/images/logo.jpg">\n    <hr>\n    <ion-list class="item">\n      <button menuClose ion-item *ngFor="let p of pages" (click)="openPage(p)">\n        <ion-icon class="menu-icon" name="{{ p.icon }}"></ion-icon>\n        {{p.title}}\n      </button>\n      <button menuClose ion-item  *ngIf="authData.loginState" (click)="logOut()">\n        <ion-icon class="menu-icon" name="person"></ion-icon>\n        Log Out\n      </button>\n      <button menuClose ion-item  *ngIf="!authData.loginState" (click)="logIn()">\n        <ion-icon class="menu-icon" name="person"></ion-icon>\n        Log In\n      </button>\n    </ion-list>\n    <button center menuClose ion-item class="user" *ngIf="authData.loginState" (click)="adminPage()">\n      You are logged in as {{currentUser.displayName}}\n    </button>\n  </ion-content>\n</ion-menu>\n\n<!-- Disable swipe-to-go-back because it\'s poor UX to combine STGB with side menus -->\n<ion-nav [root]="rootPage" #content swipeBackEnabled="false"></ion-nav>\n'/*ion-inline-end:"/Users/chrisnguyenhi/Documents/git/Wayfinder/src/app/app.html"*/
     }),
     __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["k" /* Platform */], __WEBPACK_IMPORTED_MODULE_8_angularfire2_auth__["a" /* AngularFireAuth */], __WEBPACK_IMPORTED_MODULE_2__ionic_native_status_bar__["a" /* StatusBar */], __WEBPACK_IMPORTED_MODULE_3__ionic_native_splash_screen__["a" /* SplashScreen */], __WEBPACK_IMPORTED_MODULE_9__providers_auth_auth__["a" /* AuthProvider */], __WEBPACK_IMPORTED_MODULE_10__providers_firebase_firebase__["a" /* FirebaseProvider */]])
 ], App);
@@ -1516,7 +1462,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 let stash = []; // Array to contain Markers on the map
-let timedStash = [];
+let eventStash = [];
 let MapPage = class MapPage {
     constructor(navCtrl, navParams, loading, http, geolocation, distanceMatrixService) {
         this.navCtrl = navCtrl;
@@ -1657,7 +1603,7 @@ let MapPage = class MapPage {
         this.loadTagData(); // Load all the data from firebase once
         this.loadMap();
         this.getLatLng();
-        this.placeTimedMarker();
+        this.addTimedEvent('UH End of Year Bash', 'A end of the year party for all UH Manoa students!', 'http://curvysewingcollective.com/wp-content/uploads/2017/10/CSC-Party-Time-400x400.png', 21.296967, -157.821814, 5);
     }
     searchPoints(input) {
         this.isSearching = true;
@@ -1705,6 +1651,9 @@ let MapPage = class MapPage {
             });
         })
             .then(() => {
+            //
+            // DOES THIS FOR THE EXPLORE
+            //
             if (this.exploreIndex && this.currentLat && this.currentLng) {
                 this.createExpRoute();
             }
@@ -1726,7 +1675,6 @@ let MapPage = class MapPage {
         this.endValue = {
             lat: location.lat, lng: location.lng
         };
-        this.endValueIndex = location.key;
         this.marker = new google.maps.Marker({
             position: this.endValue,
             title: 'University of Hawaii at Manoa',
@@ -1760,7 +1708,6 @@ let MapPage = class MapPage {
         const geoData = this.geoMarkers.slice();
         const location = geoData[index];
         this.endValue = { lat: location.lat, lng: location.lng };
-        this.endValueIndex = location.key;
         this.marker = new google.maps.Marker({
             position: this.endValue,
             title: 'University of Hawaii at Manoa',
@@ -1813,11 +1760,15 @@ let MapPage = class MapPage {
         /*if (this.marker) {
          this.clearStarterMarker();
          }*/
+        let renderOptions = {
+            map: this.map,
+            suppressMarkers: true
+        };
         this.clearRoute();
         this.inRoute = true;
         this.isInfoWindowOpen = true;
         this.directionsService = new google.maps.DirectionsService;
-        this.directionsDisplay = new google.maps.DirectionsRenderer;
+        this.directionsDisplay = new google.maps.DirectionsRenderer(renderOptions);
         this.directionsDisplay.setMap(this.map);
         this.calculateAndDisplayExpRoute(this.directionsService, this.directionsDisplay);
     }
@@ -1850,6 +1801,7 @@ let MapPage = class MapPage {
             this.searchingStart = true;
         }
         else {
+            console.log("hi");
             this.clearRoute();
             if (this.infoWindow) {
                 this.infoWindow.close();
@@ -1870,10 +1822,6 @@ let MapPage = class MapPage {
     }
     directFromCurrentLocation() {
         this.searchingStart = false;
-        /*let renderOptions = {
-            map: this.map,
-            suppressMarkers: true
-        }*/
         this.directionsService = new google.maps.DirectionsService;
         this.directionsDisplay = new google.maps.DirectionsRenderer;
         this.directionsDisplay.setMap(this.map);
@@ -1886,7 +1834,6 @@ let MapPage = class MapPage {
         }, (response, status) => {
             if (status === 'OK') {
                 this.directionsDisplay.setDirections(response);
-                //this.placeDirectionsIcons(response, -1, this.endValueIndex);
             }
             else {
                 window.alert('Directions request failed due to ' + status);
@@ -1895,10 +1842,6 @@ let MapPage = class MapPage {
     }
     directFromLocation(location) {
         this.searchingStart = false;
-        /*let renderOptions = {
-            map: this.map,
-            suppressMarkers: true
-        }*/
         this.directionsService = new google.maps.DirectionsService;
         this.directionsDisplay = new google.maps.DirectionsRenderer;
         this.directionsDisplay.setMap(this.map);
@@ -1911,28 +1854,11 @@ let MapPage = class MapPage {
         }, (response, status) => {
             if (status === 'OK') {
                 this.directionsDisplay.setDirections(response);
-                //this.placeDirectionsIcons(response, location.key, this.endValueIndex);
             }
             else {
                 window.alert('Directions request failed due to ' + status);
             }
         });
-    }
-    placeDirectionsIcons(directionResult, startIndex, endIndex) {
-        let directRoute = directionResult.routes[0].legs[0];
-        if (startIndex != -1) {
-            this.startMarker = new google.maps.Marker({
-                position: directRoute.steps[0].start_point,
-                map: this.map,
-                icon: this.icons[this.geoMarkers[startIndex - 1].type]
-            });
-        }
-        this.endMarker = new google.maps.Marker({
-            position: directRoute.steps[directRoute.steps.length - 1].end_point,
-            map: this.map,
-            icon: this.icons[this.geoMarkers[endIndex - 1].type]
-        });
-        //this.trackLocation();
     }
     // Could be useful if needed.
     toggleStreetView() {
@@ -1973,6 +1899,8 @@ let MapPage = class MapPage {
         }, (rej) => {
             console.error("Could not load local data", rej);
         });
+    }
+    doFilter() {
         this.filterSelect.open();
     }
     filterMarker(category) {
@@ -2100,33 +2028,11 @@ let MapPage = class MapPage {
         infoContent += '</div>';
         return infoContent;
     }
-    placeTimedMarker() {
-        var uh = { lat: 21.3159, lng: 157.8033 };
-        this.marker = new google.maps.Marker({
-            position: uh,
-            map: this.map,
-            animation: google.maps.Animation.BOUNCE
-        });
-        timedStash.push(this.marker);
-        setTimeout(function () {
-            if (timedStash) {
-                for (let i = 0; i < timedStash.length; i++) {
-                    timedStash[i].setMap(null);
-                }
-                timedStash.length = 0;
-                this.changeIcon = false;
-            }
-            else {
-                console.log('Stash array does not exist!');
-            }
-        }, 2000);
-    }
     placeAllMarkers() {
         this.clearAllMarkers();
         this.infoWindow = new google.maps.InfoWindow({
             maxWidth: 350
         });
-        this.placeTimedMarker();
         for (let i = 0, length = this.geoMarkers.length; i < length; i++) {
             let data = this.geoMarkers[i], latLng = new google.maps.LatLng(data.lat, data.lng);
             // Creating a marker and putting it on the map
@@ -2158,19 +2064,49 @@ let MapPage = class MapPage {
             this.map.setCenter({ lat: 21.2969, lng: -157.8171 });
             this.map.setZoom(15);
         }
+    }
+    addTimedEvent(event, description, image, lat, lng, hours) {
+        let infoContent = '<div class="ui grid windowContainer">';
+        infoContent += '<div id="windowHead">' + event + '</div>';
+        infoContent += '<img class="ui fluid image info" src="' + image + '">';
+        infoContent += '<div id="windowDesc">' + description + '</div>';
+        infoContent += '</div>';
+        let miliseconds = 3.6e+6;
+        let duration = miliseconds * hours;
+        this.infoWindow = new google.maps.InfoWindow({
+            maxWidth: 400
+        });
+        this.marker = new google.maps.Marker({
+            position: new google.maps.LatLng(lat, lng),
+            map: this.map,
+            title: event,
+            draggable: false,
+            animation: google.maps.Animation.DROP
+        });
+        eventStash.push(this.marker);
+        //http://themocracy.com/wp-content/uploads/2016/12/Parties.jpg used as a sample image
+        google.maps.event.addListener(this.marker, 'click', (() => {
+            this.infoWindow.setContent(infoContent);
+            this.isInfoWindowOpen = true;
+            this.marker.setPosition({ lat: lat, lng: lng });
+            this.infoWindow.open(this.map, this.marker);
+        }));
+        google.maps.event.addListener(this.infoWindow, 'closeclick', (() => {
+            this.isInfoWindowOpen = false;
+        }));
         setTimeout(function () {
-            if (stash) {
-                for (let i = 0; i < stash.length; i++) {
-                    stash[i].setMap(null);
+            if (eventStash) {
+                for (let i = 0; i < eventStash.length; i++) {
+                    eventStash[i].setMap(null);
                 }
-                stash.length = 0;
+                eventStash.length = 0;
                 this.changeIcon = false;
             }
             else {
                 console.log('Stash array does not exist!');
             }
             // Markers disappear after 200000 seconds (proof of concept for timed events
-        }, 200000);
+        }, duration);
     }
     getLatLng() {
         if (this.currentLat && this.currentLng && !this.latLng) {
@@ -2341,52 +2277,6 @@ let MapPage = class MapPage {
                         },
                         {
                             "gamma": 1
-                        }
-                    ]
-                },
-                // Remove the next five if we want labels back
-                {
-                    "featureType": "poi",
-                    "elementType": "labels",
-                    "stylers": [
-                        {
-                            "visibility": "off"
-                        }
-                    ]
-                },
-                {
-                    "featureType": "poi",
-                    "elementType": "labels.text",
-                    "stylers": [
-                        {
-                            "visibility": "off"
-                        }
-                    ]
-                },
-                {
-                    "featureType": "poi",
-                    "elementType": "labels.text.fill",
-                    "stylers": [
-                        {
-                            "visibility": "simplified"
-                        }
-                    ]
-                },
-                {
-                    "featureType": "poi",
-                    "elementType": "labels.text.stroke",
-                    "stylers": [
-                        {
-                            "visibility": "off"
-                        }
-                    ]
-                },
-                {
-                    "featureType": "poi",
-                    "elementType": "labels.icon",
-                    "stylers": [
-                        {
-                            "visibility": "off"
                         }
                     ]
                 },
@@ -2627,14 +2517,14 @@ __decorate([
 ], MapPage.prototype, "filterSelect", void 0);
 MapPage = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["n" /* Component */])({
-        selector: 'page-map',template:/*ion-inline-start:"/Users/tylerchong/Desktop/workspace/school/ics491/LoveMilkTea/src/pages/map/map.html"*/'<ion-header>\n</ion-header>\n\n<ion-content>\n\n  <div *ngIf="!isSearching && !inStreetView()" id="float-button-left-top">\n    <button ion-button clear menuToggle>\n      <ion-icon id="menu-icon" large name="menu"></ion-icon>\n    </button>\n  </div>\n\n  <div id="float-button-right-top" *ngIf="!isSearching && !inStreetView()">\n    <button ion-button clear id="search-button" (click)="showSearch()">\n      <ion-icon name="search"></ion-icon>\n    </button>\n  </div>\n\n\n  <div *ngIf="isSearching" class="search">\n    <ion-searchbar showCancelButton\n                   [(ngModel)]="input"\n                   (ionInput)="searchPoints(input)"\n                   (ionCancel)="stopSearch($event)"\n                   placeholder="Search for a location"></ion-searchbar>\n\n    <ion-scroll class="scrollable" scrollY="true">\n      <ion-list>\n        <ion-item class="search-item" *ngFor="let location of searchList" (click)="addMarker(location)">\n          {{location.name}}\n        </ion-item>\n      </ion-list>\n    </ion-scroll>\n  </div>\n\n  <div *ngIf="searchingStart" class="search">\n    <ion-searchbar showCancelButton\n                   [(ngModel)]="input"\n                   (ionInput)="searchPoints(input)"\n                   (ionCancel)="searchStop($event)"\n                   placeholder="Select starting location"></ion-searchbar>\n\n    <ion-scroll class="scrollable" scrollY="true">\n      <ion-list>\n        <ion-item class="current-location" *ngIf="latLng" (click)="directFromCurrentLocation()">\n          <ion-icon name="locate"></ion-icon>\n          Current Location\n        </ion-item>\n        <ion-item class="search-item" *ngFor="let location of searchList" (click)="directFromLocation(location)">\n          {{location.name}}\n        </ion-item>\n      </ion-list>\n    </ion-scroll>\n  </div>\n\n  <div id="float-button-left-bottom">\n    <button *ngIf="isInfoWindowOpen && !inStreetView()" ion-fab mini (click)="searchStart()">\n      <ion-icon [name]="inRoute ? \'hand\' :\'navigate\'"></ion-icon>\n    </button>\n    <button *ngIf="!isSearching && !isInfoWindowOpen && !inStreetView()" ion-fab mini (click)="changeAllMarkers()">\n      <ion-icon [name]="changeIcon ? \'remove\' :\'add\'"></ion-icon>\n    </button>\n    <button *ngIf="!isSearching && !isInfoWindowOpen && !inStreetView()" ion-fab mini (click)="showCurrLocation()">\n      <ion-icon name="locate"></ion-icon>\n    </button>\n    <button *ngIf="(!isSearching && isInfoWindowOpen) || inStreetView()" ion-fab mini (click)="toggleStreetView()">\n      <ion-icon name="eye"></ion-icon>\n    </button>\n    <button *ngIf="!isSearching && !isInfoWindowOpen && !inStreetView()" ion-fab mini (click)="doFilter()">\n      <ion-icon name="funnel"></ion-icon>\n    </button>\n  </div>\n\n  <div #map id="map"></div>\n\n  <ion-select #filterSelect [(ngModel)]="filter" multiple="false" #C (ionChange)="filterMarker(C.value)" cancelText="Cancel"\n              okText="Filter">\n    <ion-option *ngFor="let item of typeList" value="{{item}}">{{item}}</ion-option>\n  </ion-select>\n\n</ion-content>\n'/*ion-inline-end:"/Users/tylerchong/Desktop/workspace/school/ics491/LoveMilkTea/src/pages/map/map.html"*/,
+        selector: 'page-map',template:/*ion-inline-start:"/Users/chrisnguyenhi/Documents/git/Wayfinder/src/pages/map/map.html"*/'<ion-header>\n</ion-header>\n\n<ion-content>\n\n  <div *ngIf="!isSearching && !inStreetView()" id="float-button-left-top">\n    <button ion-button clear menuToggle>\n      <ion-icon id="menu-icon" large name="menu"></ion-icon>\n    </button>\n  </div>\n\n  <div id="float-button-right-top" *ngIf="!isSearching && !inStreetView()">\n    <button ion-button clear id="search-button" (click)="showSearch()">\n      <ion-icon name="search"></ion-icon>\n    </button>\n  </div>\n\n\n  <div *ngIf="isSearching" class="search">\n    <ion-searchbar showCancelButton\n                   [(ngModel)]="input"\n                   (ionInput)="searchPoints(input)"\n                   (ionCancel)="stopSearch($event)"\n                   placeholder="Search for a location"></ion-searchbar>\n\n    <ion-scroll class="scrollable" scrollY="true">\n      <ion-list>\n        <ion-item class="search-item" *ngFor="let location of searchList" (click)="addMarker(location)">\n          {{location.name}}\n        </ion-item>\n      </ion-list>\n    </ion-scroll>\n  </div>\n\n  <div *ngIf="searchingStart" class="search">\n    <ion-searchbar showCancelButton\n                   [(ngModel)]="input"\n                   (ionInput)="searchPoints(input)"\n                   (ionCancel)="searchStop($event)"\n                   placeholder="Select starting location"></ion-searchbar>\n\n    <ion-scroll class="scrollable" scrollY="true">\n      <ion-list>\n        <ion-item class="current-location" *ngIf="latLng" (click)="directFromCurrentLocation()">\n          <ion-icon name="locate"></ion-icon>\n          Current Location\n        </ion-item>\n        <ion-item class="search-item" *ngFor="let location of searchList" (click)="directFromLocation(location)">\n          {{location.name}}\n        </ion-item>\n      </ion-list>\n    </ion-scroll>\n  </div>\n\n  <div id="float-button-left-bottom">\n    <button *ngIf="isInfoWindowOpen && !inStreetView()" ion-fab mini (click)="searchStart()">\n      <ion-icon [name]="inRoute ? \'hand\' :\'navigate\'"></ion-icon>\n    </button>\n    <button *ngIf="!isSearching && !isInfoWindowOpen && !inStreetView()" ion-fab mini (click)="changeAllMarkers()">\n      <ion-icon [name]="changeIcon ? \'remove\' :\'add\'"></ion-icon>\n    </button>\n    <button *ngIf="!isSearching && !isInfoWindowOpen && !inStreetView()" ion-fab mini (click)="showCurrLocation()">\n      <ion-icon name="locate"></ion-icon>\n    </button>\n    <button *ngIf="(!isSearching && isInfoWindowOpen) || inStreetView()" ion-fab mini (click)="toggleStreetView()">\n      <ion-icon name="eye"></ion-icon>\n    </button>\n    <button *ngIf="!isSearching && !isInfoWindowOpen && !inStreetView()" ion-fab mini (click)="doFilter()">\n      <ion-icon name="funnel"></ion-icon>\n    </button>\n  </div>\n\n  <div #map id="map"></div>\n\n  <ion-select #filterSelect [(ngModel)]="filter" multiple="false" #C (ionChange)="filterMarker(C.value)" cancelText="Cancel"\n              okText="Filter">\n    <ion-option *ngFor="let item of typeList" value="{{item}}">{{item}}</ion-option>\n  </ion-select>\n\n</ion-content>\n'/*ion-inline-end:"/Users/chrisnguyenhi/Documents/git/Wayfinder/src/pages/map/map.html"*/,
     }),
     __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_3_ionic_angular__["i" /* NavController */], __WEBPACK_IMPORTED_MODULE_3_ionic_angular__["j" /* NavParams */], __WEBPACK_IMPORTED_MODULE_3_ionic_angular__["g" /* LoadingController */], __WEBPACK_IMPORTED_MODULE_4__angular_http__["a" /* Http */], __WEBPACK_IMPORTED_MODULE_7__ionic_native_geolocation__["a" /* Geolocation */], __WEBPACK_IMPORTED_MODULE_8__services_distanceMatrixService_distanceMatrixService__["a" /* DistanceMatrixService */]])
 ], MapPage);
 
-  //# sourceMappingURL=map.js.map
+//# sourceMappingURL=map.js.map
 
 /***/ })
-  
+
 },[448]);
 //# sourceMappingURL=main.js.map
