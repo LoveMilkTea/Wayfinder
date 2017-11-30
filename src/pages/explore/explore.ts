@@ -47,6 +47,8 @@ export class ExplorePage {
         }
     }
 
+    //DOES MAPTO FIRST
+
     mapTo(value) {
         this.navCtrl.push(MapPage, {
             locationIndex: value.toString(),

@@ -56,7 +56,6 @@ export class MapPage {
     searchingStart: boolean = false;
     inRoute: boolean = false;
     navId: any;
-    endValueIndex;
 
     constructor(public navCtrl: NavController, public navParams: NavParams, public loading: LoadingController, public http: Http, private geolocation: Geolocation, public distanceMatrixService: DistanceMatrixService) {
         this.exploreIndex = navParams.get('locationIndex');
@@ -153,7 +152,9 @@ export class MapPage {
                 });
             })
             .then(() => {
-
+                //
+                // DOES THIS FOR THE EXPLORE
+                //
                 if (this.exploreIndex && this.currentLat && this.currentLng) {
                     this.createExpRoute();
                 }
@@ -183,7 +184,6 @@ export class MapPage {
         this.endValue = {
             lat: location.lat, lng: location.lng
         };
-        this.endValueIndex = location.key;
 
         this.marker = new google.maps.Marker({
             position: this.endValue,
@@ -224,7 +224,6 @@ export class MapPage {
         const location = geoData[index];
 
         this.endValue = {lat: location.lat, lng: location.lng};
-        this.endValueIndex = location.key;
 
         this.marker = new google.maps.Marker({
             position: this.endValue,
@@ -284,14 +283,19 @@ export class MapPage {
         /*if (this.marker) {
          this.clearStarterMarker();
          }*/
+        let renderOptions = {
+            map: this.map,
+            suppressMarkers: true
+        }
+
         this.clearRoute();
         this.inRoute = true;
         this.isInfoWindowOpen = true;
 
         this.directionsService = new google.maps.DirectionsService;
-        this.directionsDisplay = new google.maps.DirectionsRenderer;
-
+        this.directionsDisplay = new google.maps.DirectionsRenderer(renderOptions);
         this.directionsDisplay.setMap(this.map);
+
         this.calculateAndDisplayExpRoute(this.directionsService, this.directionsDisplay);
     }
 
@@ -326,6 +330,7 @@ export class MapPage {
             this.searchingStart = true;
         }
         else {
+            console.log("hi");
             this.clearRoute();
             if (this.infoWindow) {
                 this.infoWindow.close();
@@ -349,17 +354,13 @@ export class MapPage {
     directFromCurrentLocation() {
         this.searchingStart = false;
 
-        /*let renderOptions = {
-            map: this.map,
-            suppressMarkers: true
-        }*/
-
         this.directionsService = new google.maps.DirectionsService;
         this.directionsDisplay = new google.maps.DirectionsRenderer;
         this.directionsDisplay.setMap(this.map);
 
         let origin = this.latLng;
         let destination = this.endValue;
+
         this.directionsService.route({
             origin: origin,
             destination: destination,
@@ -367,22 +368,14 @@ export class MapPage {
         }, (response, status) => {
             if (status === 'OK') {
                 this.directionsDisplay.setDirections(response);
-                //this.placeDirectionsIcons(response, -1, this.endValueIndex);
             } else {
                 window.alert('Directions request failed due to ' + status);
             }
         });
-
-
     }
 
     directFromLocation(location) {
         this.searchingStart = false;
-
-        /*let renderOptions = {
-            map: this.map,
-            suppressMarkers: true
-        }*/
 
         this.directionsService = new google.maps.DirectionsService;
         this.directionsDisplay = new google.maps.DirectionsRenderer;
@@ -390,6 +383,7 @@ export class MapPage {
 
         let origin = {lat: location.lat, lng: location.lng};
         let destination = this.endValue;
+
         this.directionsService.route({
             origin: origin,
             destination: destination,
@@ -397,30 +391,10 @@ export class MapPage {
         }, (response, status) => {
             if (status === 'OK') {
                 this.directionsDisplay.setDirections(response);
-                //this.placeDirectionsIcons(response, location.key, this.endValueIndex);
             } else {
                 window.alert('Directions request failed due to ' + status);
             }
         });
-    }
-
-    placeDirectionsIcons(directionResult, startIndex, endIndex) {
-        let directRoute = directionResult.routes[0].legs[0];
-
-        if (startIndex != -1) {
-            this.startMarker = new google.maps.Marker({
-                position: directRoute.steps[0].start_point,
-                map: this.map,
-                icon: this.icons[this.geoMarkers[startIndex - 1].type]
-            });
-        }
-
-        this.endMarker = new google.maps.Marker({
-            position: directRoute.steps[directRoute.steps.length - 1].end_point,
-            map: this.map,
-            icon: this.icons[this.geoMarkers[endIndex - 1].type]
-        })
-        //this.trackLocation();
     }
 
     // Could be useful if needed.
