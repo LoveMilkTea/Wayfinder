@@ -568,27 +568,27 @@ export class MapPage {
         return infoContent;
     }
 
-    placeTimedMarker() {
-        var uh = {lat: 21.3159, lng: 157.8033};
-        this.marker = new google.maps.Marker({
-            position: uh,
-            map: this.map,
-            animation: google.maps.Animation.BOUNCE
-        });
-        timedStash.push(this.marker);
-
-        setTimeout(function () {
-            if (timedStash) {
-                for (let i = 0; i < timedStash.length; i++) {
-                    timedStash[i].setMap(null);
-                }
-                timedStash.length = 0;
-                this.changeIcon = false;
-            } else {
-                console.log('Stash array does not exist!');
-            }
-        }, 2000);
-    }
+    // placeTimedMarker() {
+    //     var uh = {lat: 21.3159, lng: 157.8033};
+    //     this.marker = new google.maps.Marker({
+    //         position: uh,
+    //         map: this.map,
+    //         animation: google.maps.Animation.BOUNCE
+    //     });
+    //     timedStash.push(this.marker);
+    //
+    //     setTimeout(function () {
+    //         if (timedStash) {
+    //             for (let i = 0; i < timedStash.length; i++) {
+    //                 timedStash[i].setMap(null);
+    //             }
+    //             timedStash.length = 0;
+    //             this.changeIcon = false;
+    //         } else {
+    //             console.log('Stash array does not exist!');
+    //         }
+    //     }, 2000);
+    // }
 
     placeAllMarkers() {
         this.clearAllMarkers();
