@@ -484,7 +484,7 @@ export class MapPage {
         }
 
         this.map.setCenter({lat: 21.2969, lng: -157.8171});
-        this.map.setZoom(15);
+        this.map.setZoom(17);
 
     }
 
@@ -791,6 +791,7 @@ export class MapPage {
 
         });
         this.userMarker.setAnimation(google.maps.Animation.BOUNCE);
+        this.map.setZoom(17);
     }
 
 // Set up search params for the fuzzy search
