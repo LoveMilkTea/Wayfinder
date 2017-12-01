@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, ToastController } from 'ionic-angular';
 import { AngularFireAuth } from "angularfire2/auth";
 import {FirebaseProvider} from "../../providers/firebase/firebase";
+import {SubmitDataChooseCoordsPage} from "../submit-data-choose-coords/submit-data-choose-coords";
 
 @IonicPage()
 @Component({
@@ -87,5 +88,11 @@ export class AdminPage {
         const result = await this.afAuth.auth.signOut();
         this.navCtrl.setRoot('HomePage');
     }
+
+    checkCoords(item){
+        this.navCtrl.push(SubmitDataChooseCoordsPage, item);
+        console.log(item);
+    }
+
 
 }
