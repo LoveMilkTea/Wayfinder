@@ -14,13 +14,11 @@ declare var google;
 
 @Injectable()
 export class ExplorePage {
-
     currentLat: any;
     currentLng: any;
     dist: Array<any> = [];
     dur: Array<any> = [];
     loader: any;
-
     service = new google.maps.DistanceMatrixService();
     current: any;
     wrc = new google.maps.LatLng(21.2989380, -157.8185730);
@@ -47,9 +45,17 @@ export class ExplorePage {
         }
     }
 
-    //DOES MAPTO FIRST
+    /**************** DIRECTIONAL FUNCTIONS ****************/
+
+
+    /*
+     * Directs towards the selected location
+     * @param {int} value - Location index of the selected location to direct towards
+     * @return none
+     */
 
     mapTo(value) {
+        console.log(value + ' mapto');
         this.navCtrl.push(MapPage, {
             locationIndex: value.toString(),
             currentLat: this.currentLat,
@@ -57,7 +63,14 @@ export class ExplorePage {
         });
     }
 
+    /*
+     * Shows the location of the selected location
+     * @param {int} value - Location index of the selected location
+     * @return none
+     */
+
     showLocation(value) {
+        console.log(value + ' showloc')
         this.navCtrl.push(MapPage, {
             locationIndex2: value,
             currentLat: this.currentLat,
@@ -65,7 +78,15 @@ export class ExplorePage {
         });
     }
 
-    hasCurrLocation() { // This will check if the app has access to user current location to calculate distance from point of interest
+    /*
+     * Checks if the application has access to the users current location to calculate the distance
+     *  from the point of interest
+     * @param none
+     * @return true - If users current location is accessible
+     * @return false - If users current location is inaccessible
+     */
+
+    hasCurrLocation() {
         if (this.current) {
             return true;
         }
@@ -73,6 +94,14 @@ export class ExplorePage {
             return false;
         }
     }
+
+    /**************** DISTANCE / DURATION FUNCTIONS ****************/
+
+    /*
+     * Gets the users distance and duration to the locations on the explore page
+     * @param none
+     * @return none
+     */
 
     findDistanceAndDuration() {
         setTimeout(() => {
@@ -96,13 +125,29 @@ export class ExplorePage {
         }, 5000);
     }
 
+    /*
+     * Uses user's current location to load distance to destination
+     *  and estimated time to get there
+     *  @param {object} data - Distance and location being returned
+     *  @return none
+     */
+
     loadDistanceAndDuration(data) {
+        console.log(data + ' loadDnD')
         var length = data.rows[0].elements.length;
         for (var i = 0; i < length; i++) {
             this.dist.push("(" + data.rows[0].elements[i].distance.text + ")");
             this.dur.push(data.rows[0].elements[i].duration.text);
         }
     }
+
+    /**************** LOADING ANIMATION FUNCTIONS ****************/
+
+    /*
+     * Loads the loader animation and gets the distance and duraition to locations
+     * @param none
+     * @return none
+     */
 
     private showLoading() {
         this.loader = this.loading.create({
@@ -111,6 +156,12 @@ export class ExplorePage {
         this.loader.present();
         this.findDistanceAndDuration();
     }
+
+    /*
+     * Dismisses the loader animation
+     * @param none
+     * @return none
+     */
 
     private hideLoading(){
         this.loader.dismiss().catch(() => {});
