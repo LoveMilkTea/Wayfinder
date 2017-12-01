@@ -1490,6 +1490,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 let stash = []; // Array to contain Markers on the map
 let eventStash = [];
+let timedStash = [];
 let MapPage = class MapPage {
     constructor(navCtrl, navParams, loading, http, geolocation, distanceMatrixService, mapProvider, database) {
         this.navCtrl = navCtrl;
@@ -1811,7 +1812,6 @@ let MapPage = class MapPage {
      * @return {Object} infoContent - HTML info window object to display
      */
     getInfoWindowData(location) {
-        console.log(location);
         let imgSrc;
         let infoContent = '<div class="ui grid windowContainer">';
         if (location.name) {
@@ -2180,7 +2180,7 @@ let MapPage = class MapPage {
             }
         }
         this.map.setCenter({ lat: 21.2969, lng: -157.8171 });
-        this.map.setZoom(17);
+        this.map.setZoom(15);
     }
     /***************** MARKER CLEARING AND PLACING FUNCTIONS ****************/
     /**
@@ -2213,62 +2213,6 @@ let MapPage = class MapPage {
         else {
             console.log('Stash array does not exist!');
         }
-    }
-    /**
-     * Places all data points on the map
-     * @param none
-     * @return none
-     */
-    getInfoWindowData(location) {
-        let imgSrc;
-        let infoContent = '<div class="ui grid windowContainer">';
-        if (location.name) {
-            if (location.name.toLowerCase() == 'n/a') {
-                location.name = '';
-            }
-            infoContent += '<div id="windowHead">' + location.name + '</div>';
-        }
-        if (location.key) {
-            if (location.key > 163) {
-                imgSrc = "../../assets/images/uhLogo.jpg";
-            }
-            else {
-                if (!isNaN(location.key)) {
-                    imgSrc = "https://manoanow.org/app/map/images/" + location.key + ".png";
-                }
-                else {
-                    imgSrc = "../../assets/images/uhLogo.jpg";
-                }
-            }
-            infoContent += '<img class="ui fluid image info" src="' + imgSrc + '">';
-        }
-        if (location.description) {
-            if (location.description.toLowerCase() == 'n/a') {
-                location.description = '';
-            }
-            else {
-                infoContent += '<div id="windowDesc">' + location.description + '</div>';
-            }
-        }
-        if (location.address) {
-            if (location.address.toLowerCase() == 'n/a') {
-                location.address = '';
-            }
-            else {
-                infoContent += '<div id="windowAddress"><span style="font-weight: bold; color: #259975;">Address: </span>' + location.address + '</div>';
-            }
-        }
-        if (location.number) {
-            if (location.number.toString().toLowerCase() == 'n/a') {
-                location.number = '';
-            }
-            else {
-                infoContent += '<div id="windowPhone"><span style="font-weight: bold; color: #259975;">Phone: </span>' + location.number + '</div>';
-            }
-        }
-        infoContent += '<i id="infoIcon">' + '&#9432;' + '</i>';
-        infoContent += '</div>';
-        return infoContent;
     }
     /**
      * Places all markers on the map
@@ -2357,7 +2301,7 @@ let MapPage = class MapPage {
             this.map.setCenter(this.latLng);
             this.userMarker.setPosition(this.latLng);
             this.userMarker.setAnimation(google.maps.Animation.BOUNCE);
-            this.map.setZoom(17);
+            this.map.setZoom(15);
         }
     }
     /**
@@ -2371,10 +2315,10 @@ let MapPage = class MapPage {
             if (this.userMarker) {
                 this.userMarker.setPosition(newPoint);
                 this.userMarker.setMap(this.map);
-                this.map.setZoom(17);
+                this.map.setZoom(15);
                 this.userMarker.setAnimation(google.maps.Animation.BOUNCE);
             }
-            this.map.setZoom(17);
+            this.map.setZoom(15);
             this.map.setCenter(newPoint);
         }, (error) => {
             console.log(error);
@@ -2424,7 +2368,7 @@ let MapPage = class MapPage {
             }
         });
         this.userMarker.setAnimation(google.maps.Animation.BOUNCE);
-        this.map.setZoom(17);
+        this.map.setZoom(15);
     }
 };
 __decorate([
