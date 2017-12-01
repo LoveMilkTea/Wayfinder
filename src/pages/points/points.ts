@@ -8,7 +8,6 @@ import {AuthProvider} from "../../providers/auth/auth";
 import { LoginPage } from '../login/login';
 import {FirebaseProvider} from "../../providers/firebase/firebase";
 
-
 @IonicPage()
 @Component({
     selector: 'points-page',
@@ -53,6 +52,14 @@ export class PointsPage {
       this.showComments();
     }
 
+    /***************** PAGE LOAD FUNCTION ****************/
+
+    /**
+     *  Loads all of the user comments for the particular point
+     *  @param none
+     *  @return none
+     */
+
     showComments() {
         var item = [];
         this.database.masterData.child(this.key).child("comments").once("value")
@@ -63,6 +70,13 @@ export class PointsPage {
 
     }
 
+    /***************** COMMENTS FUNCTION ****************/
+
+    /**
+     *  Takes data from the leave comments form and places it into the master data firebase db
+     *  @param {Object} - NgForm data
+     *  @return none
+     */
     addComments(formData: NgForm){
         if(this.user) {
             this.date = new Date().toString();
@@ -75,12 +89,36 @@ export class PointsPage {
             this.commentText.value = "";
         }
     }
+
+    /***************** TOGGLE COMMENTS FUNCTION ****************/
+
+    /**
+     *  Allows the user to hide the comments
+     *  @param none
+     *  @return none
+     */
     toggleAddButton() {
         this.showAdd = !this.showAdd;
     }
+
+    /***************** GET CURRENT DATE/TIME FUNCTION ****************/
+
+    /**
+     *  When a user submits a comments, this function gets the current data so it can be associated with the
+     *  @param none
+     *  @return {Date Object} - The current date
+     */
     getDate(comment: any) {
         return new Date(comment.dateTime).getMonth() + 1 + '/' + new Date(comment.dateTime).getDate() + '/' + new Date(comment.dateTime).getFullYear()
     }
+
+    /***************** DIRECT TO LOGIN FUNCTION ****************/
+
+    /**
+     *  A user can only comment if they are logged in, this directs a non-logged in user to the login page
+     *  @param none
+     *  @return none
+     */
     logIn(){
         this.navCtrl.push(LoginPage);
     }

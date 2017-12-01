@@ -37,7 +37,13 @@ export class EditSubmitDataPage {
         this.dataKey = this.navParams.get('key');
     }
 
-    ionViewDidLoad() {}
+    /***************** EDIT USER SUBMITTED POINT FUNCTION ****************/
+
+    /**
+     *  Submits the form data that the admin entered to the User Input firebase db
+     *  @param none
+     *  @return none
+     */
 
     onSubmit(formData: NgForm) {
         for (var element in formData.value) {

@@ -19,7 +19,13 @@ export class ResetPasswordPage {
                 Validators.compose([Validators.required, EmailValidator.isValid])],
         });
     }
+    /***************** RESET PASSWORD FUNCTION ****************/
 
+    /**
+     *  Uses firebase to reset password. Firebase emails the user with a link to reset the password
+     *  @param none
+     *  @return none
+     */
     resetPassword(){
         if (!this.resetPasswordForm.valid){
             console.log(this.resetPasswordForm.value);

@@ -8,7 +8,6 @@ import {SignupPage} from '../signup/signup';
 import {ResetPasswordPage} from '../reset-password/reset-password';
 import app = firebase.app;
 import {MapPage} from "../map/map";
-import {FIREBASE_CONFIG} from "./../../app.firebase.config";
 import * as firebase from 'firebase/app';
 import {FirebaseProvider} from "../../providers/firebase/firebase";
 
@@ -31,9 +30,13 @@ export class LoginPage {
         });
     }
 
-    ionViewDidLoad() {
-        console.log('ionViewDidLoad LoginPage');
-    }
+    /***************** LOG IN USER FUNCTION ****************/
+
+    /**
+     *  Logs in the user and directs to map page for user and admin console for administrators
+     *  @param none
+     *  @return none
+     */
 
     loginUser() {
         if (!this.loginForm.valid) {
@@ -92,10 +95,25 @@ export class LoginPage {
             this.loading.present();
         }
     }
+
+    /***************** CREATE USER ACCOUNT FUNCTION ****************/
+
+    /**
+     *  Directs users to a form page to sign up for a user account
+     *  @param none
+     *  @return none
+     */
     createAccount() {
         this.navCtrl.push('SignupPage');
     }
 
+    /***************** RESET PASSWORD FUNCTION ****************/
+
+    /**
+     *  Directs users to a form page to reset user's password
+     *  @param none
+     *  @return none
+     */
     goToResetPassword() {
         this.navCtrl.push('ResetPasswordPage');
     }

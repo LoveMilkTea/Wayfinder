@@ -1,5 +1,5 @@
-import {Component, ViewChild, ElementRef, Injectable} from '@angular/core';
-import {IonicPage, NavController, NavParams, LoadingController} from 'ionic-angular';
+import {Component, ViewChild, ElementRef} from '@angular/core';
+import {NavController, NavParams, LoadingController} from 'ionic-angular';
 import {Http} from '@angular/http';
 import 'rxjs/add/operator/map';
 import {SubmitDataPage} from "../submit-data/submit-data";
@@ -34,6 +34,16 @@ export class SubmitDataChooseCoordsPage {
 
     }
 
+    /***************** PAGE LOADING FUNCTION ****************/
+
+    /**
+     *  this.adminCheckLat is only set if an admin user was directed to this page from the admin console. The admin uses this map
+     *  to check that the user submitted coordinate is correct.
+     *  If the admin user was directed here, this function calls a function to load the user submitted point
+     *  @param none
+     *  @return none
+     */
+
     ionViewDidLoad() {
         this.loadMap();
         if (this.adminCheckLat){
@@ -42,14 +52,29 @@ export class SubmitDataChooseCoordsPage {
 
     }
 
+    /***************** ADMIN LOAD COORDINATE FUNCTION ****************/
+
+    /**
+     *  Loads the user submitted coordinate that the admin user is checking
+     *  @param none
+     *  @return none
+     */
+
     loadAdminCoord() {
-        console.log("put the marker down");
         this.marker = new google.maps.Marker({
             position: this.latLng,
             map: this.map,
-            //icon: this.mapProvider.icons[data.type],
         });
     }
+
+    /***************** GET USER CLICKED COORDS FUNCTION ****************/
+
+    /**
+     *  IF the user was directed to this page to be used to click a location and load it into the form to submit data, then
+     *  this function gets the coords that the user clicked on
+     *  @param none
+     *  @return none
+     */
 
     getCoords() {
         this.url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${this.lat},${this.long}&key=AIzaSyCeP_xxvneWjyU_0EIg5slVUl3I6TtH4oA`;
@@ -92,6 +117,14 @@ export class SubmitDataChooseCoordsPage {
         })
     }
 
+    /***************** GET ADDRESS FUNCTION ****************/
+
+    /**
+     *  Uses Google Maps API to find an associated address to the submitted location
+     *  @param none
+     *  @return {Object} - The user's address
+     */
+
     getAddress() {
         this.url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${this.lat},${this.long}&key=AIzaSyCeP_xxvneWjyU_0EIg5slVUl3I6TtH4oA`;
 
@@ -101,6 +134,16 @@ export class SubmitDataChooseCoordsPage {
         });
         return this.address;
     }
+
+    /***************** LOAD MAP FUNCTION ****************/
+
+    /**
+     *  Loads the Google map on the page. Only sets up a click listener if the user was directed from the submit data points
+     *  page.
+     *  @param none
+     *  @return none
+     */
+
 
     loadMap() {
         this.map = new google.maps.Map(this.mapElement.nativeElement, this.mapProvider.mapStyle);
@@ -114,6 +157,15 @@ export class SubmitDataChooseCoordsPage {
         this.map.setZoom(17);
 
     }
+
+    /***************** RETURN FUNCTION ****************/
+
+    /**
+     *  Allows the admin to return to the previous page and complete reviewing the user submitted point
+     *  @param none
+     *  @return none
+     */
+
     return() {
         this.navCtrl.pop();
     }

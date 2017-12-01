@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, ToastController } from 'ionic-angular';
-import { AngularFireAuth } from "angularfire2/auth";
+import { IonicPage, NavController, NavParams} from 'ionic-angular';
 import {FirebaseProvider} from "../../providers/firebase/firebase";
 import {SubmitDataChooseCoordsPage} from "../submit-data-choose-coords/submit-data-choose-coords";
 
@@ -13,9 +12,17 @@ export class AdminPage {
     items: string[];
     filterValue: any;
 
-    constructor(private afAuth: AngularFireAuth, private toast: ToastController, public navCtrl: NavController, public navParams: NavParams, public database: FirebaseProvider) {
+    constructor(public navCtrl: NavController, public navParams: NavParams, public database: FirebaseProvider) {
         this.filterValue = 'showAll';
     }
+
+    /***************** PAGE LOAD FUNCTION ****************/
+
+    /**
+     *  Creates an array of item keys to facilite filtering in the filterItems() function
+     *  @param none
+     *  @return none
+     */
 
     ionViewDidLoad() {
         const item = [];
@@ -35,6 +42,15 @@ export class AdminPage {
         return string.charAt(0).toUpperCase() + string.slice(1);
     }
 
+    /***************** APPROVE SUBMITTED POINT FUNCTION ****************/
+
+    /**
+     *  Approves a point item from a submitter
+     *  Creates a new point item in the firebase master data db (testpoints)
+     *  @param {Object} value - contains point data submitted by the user
+     *  @return none
+     */
+
     approve(value) { // 'value' is the key for the entry
         this.database.userInput.child(value.key).update({'status': 'approved'});
         this.database.masterData = this.database.masterData.push();
@@ -52,19 +68,54 @@ export class AdminPage {
         //this.navCtrl.setRoot(this.navCtrl.getActive().component);
     }
 
+    /***************** DENY SUBMITTED POINT FUNCTION ****************/
+
+    /**
+     *  Denies a point item from a submitter
+     *  Sets the item in the user input firebase db to denied
+     *  @param {Object} value - contains point data submitted by the user
+     *  @return none
+     */
+
     deny(value) {
         this.database.userInput.child(value.key).update({'status': 'denied'});
         this.filterItems(this.filterValue);
     }
 
+    /***************** EDIT SUBMITTED POINT FUNCTION ****************/
+
+    /**
+     *  Directs the admin user to a page to edit a user's submission
+     *  @param {Object} value - contains point data submitted by the user, passed as a parameter to be used in the edit data page
+     *  @return none
+     */
+
     editData(value) {
         this.navCtrl.push('EditSubmitDataPage', value);
     }
+
+    /***************** DELETE SUBMITTED POINT FUNCTION ****************/
+
+    /**
+     *  Deletes the submitted point from the UserInput firebase db
+     *  Sets the item in the user input firebase db to denied
+     *  @param {Object} value - contains point data submitted by the user
+     *  @return none
+     */
 
     deleteItem(value) { // 'value' is the key for the entry
         this.database.userInput.child(value.key).remove();
         this.filterItems(this.filterValue); // refresh the page
     }
+
+    /***************** FILTER SUBMITTED POINTS FUNCTION ****************/
+
+    /**
+     *  Filters the submitted points on the admin's console view
+     *  @param {Object} value - contains point data submitted by the user
+     *  @return none
+     */
+
     filterItems(value) {
         this.filterValue = value;
         const item = [];
@@ -84,14 +135,15 @@ export class AdminPage {
         this.items = item;
     }
 
-    async logout() {
-        const result = await this.afAuth.auth.signOut();
-        this.navCtrl.setRoot('HomePage');
-    }
+    /***************** CHECK SUBMITTED POINT FUNCTION ****************/
 
-    checkCoords(item){
-        this.navCtrl.push(SubmitDataChooseCoordsPage, item);
-        console.log(item);
+    /**
+     *  Directs the admin to a map that contains the submitted coordinate so the admin can verify the location
+     *  @param {Object} value - contains point data submitted by the user
+     *  @return none
+     */
+    checkCoords(value){
+        this.navCtrl.push(SubmitDataChooseCoordsPage, value);
     }
 
 
