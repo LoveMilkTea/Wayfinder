@@ -11,10 +11,7 @@ import 'rxjs/add/operator/switchMap';
 
 @Injectable()
 export class AuthProvider {
-
-    //used as a global variable to display different views for logged in users
-    //maybe change to behaviorsubject...
-    public loginState:boolean = false;
+    loginState:boolean = false;
     user: BehaviorSubject<User> = new BehaviorSubject(null)
     ref: any;
     App: any;
@@ -35,22 +32,62 @@ export class AuthProvider {
       })
   }
 
+    /***************** LOG-IN USER FUNCTION ****************/
+
+    /**
+     *  Logs in the user using the firebase API
+     *  @param {string} value - user's email, {string} value - user's password
+     *  @return {firebase.promise}
+     */
+
     loginUser(newEmail: string, newPassword: string): firebase.Promise<any> {
         return this.afAuth.auth.signInWithEmailAndPassword(newEmail, newPassword);
     }
+
+    /***************** RESET USER PASSWORD FUNCTION ****************/
+
+    /**
+     *  Resets the user's password using the firebase API
+     *  @param {string} value - user's email
+     *  @return {firebase.promise}
+     */
 
     resetPassword(email: string): firebase.Promise<any> {
         return this.afAuth.auth.sendPasswordResetEmail(email);
     }
 
+    /***************** LOG OUT USER FUNCTION ****************/
+
+    /**
+     *  Logs out the user using the firebase API
+     *  @param  none
+     *  @return {firebase.promise}
+     */
+
     logoutUser(): firebase.Promise<any> {
         return this.afAuth.auth.signOut();
     }
+
+    /***************** SIGN UP NEW USER FUNCTION ****************/
+
+    /**
+     *  Signs up a new user authentication account using the firebase API
+     *  @param {string} value - user's email, {string} value - user's password
+     *  @return {firebase.promise}
+     */
 
     signupUser(newEmail: string, newPassword: string): firebase.Promise<any> {
         return this.afAuth.auth.createUserWithEmailAndPassword(newEmail, newPassword);
     }
 
+    /***************** CREATE USER FUNCTION ****************/
+
+    /**
+     *  Creates a corresponding user account db entry from the authentication user
+     *  The authentication user and user account are mapped to eachother by the same uid
+     *  @param {string} value - user's first name, {string} value - user's last name
+     *  @return {firebase.promise}
+     */
     createUser(newFirstName: string, newLastName: string) {
         let user = firebase.auth().currentUser;
         //updating the firebase default user accounts
@@ -74,20 +111,5 @@ export class AuthProvider {
             console.log("fail");
         });
 
-    }
-
-    //currently not working because of async, need to fix
-    getUserRoles(){
-        let user = firebase.auth().currentUser;
-        let uid = user.uid;
-        let roles = {}
-        this.ref.once("value", (snapshot)=> {
-            if(snapshot.val()[uid].roles) {
-                let temp = snapshot.val()[uid].roles;
-               // let roles = {admin: temp.admin ? true: false};
-                roles = temp
-            }
-        });
-        return roles;
     }
 }
