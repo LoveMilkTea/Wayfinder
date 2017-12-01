@@ -1,17 +1,17 @@
-import {Component, ViewChild, ElementRef, Injectable} from '@angular/core';
-import {FIREBASE_CONFIG} from "./../../app.firebase.config";
-import * as firebase from 'firebase';
-import {IonicPage, NavController, NavParams, LoadingController, Select} from 'ionic-angular';
-import {Http} from '@angular/http';
+import { Component, ViewChild, ElementRef, Injectable } from '@angular/core';
+import { IonicPage, NavController, NavParams, LoadingController, Select } from 'ionic-angular';
+import { Http } from '@angular/http';
 import 'rxjs/add/operator/map';
 import {isNullOrUndefined} from "util";
 import * as Fuse from 'fuse.js';
-import {Geolocation} from '@ionic-native/geolocation';
-import {DistanceMatrixService} from '../../services/distanceMatrixService/distanceMatrixService'
+import { Geolocation } from '@ionic-native/geolocation';
+import { DistanceMatrixService } from '../../services/distanceMatrixService/distanceMatrixService';
+import {MapProvider} from "../../providers/map/map";
+import {FirebaseProvider} from "../../providers/firebase/firebase";
 
 declare var google;
 let stash = []; // Array to contain Markers on the map
-let timedStash = [];
+let eventStash = [];
 
 @Component({
     selector: 'page-map',
@@ -24,9 +24,6 @@ export class MapPage {
     @ViewChild('filterSelect') filterSelect: Select;
     map: any;
     panorama: any;
-    App: any;
-    db: any;
-    ref: any;
     marker: any;
     startMarker: any;
     endMarker: any;
@@ -56,7 +53,7 @@ export class MapPage {
     inRoute: boolean = false;
     navId: any;
 
-    constructor(public navCtrl: NavController, public navParams: NavParams, public loading: LoadingController, public http: Http, private geolocation: Geolocation, public distanceMatrixService: DistanceMatrixService) {
+    constructor(public navCtrl: NavController, public navParams: NavParams, public loading: LoadingController, public http: Http, private geolocation: Geolocation, public distanceMatrixService: DistanceMatrixService, public mapProvider: MapProvider, public database: FirebaseProvider) {
         this.exploreIndex = navParams.get('locationIndex');
         this.exploreIndex2 = navParams.get('locationIndex2');
         this.currentLat = navParams.get('currentLat');
@@ -82,19 +79,11 @@ export class MapPage {
         }).catch((error) => {
             console.log('Error getting location', error);
         });
-
-        if (!firebase.apps.length) {
-            this.App = firebase.initializeApp(FIREBASE_CONFIG);
-        } else {
-            this.App = firebase.app();
-        }
-        this.db = this.App.database();
-        this.ref = this.db.ref("testPoints");
     }
 
-    /**************** PAGE LOADING FUNCTION ****************/
+    /***************** PAGE LOADING FUNCTION ****************/
 
-    /*
+    /**
      * Prepares the map page for use (onload)
      *  Loads all the data from firebase, loads the map, gets user geolocation, and places the
      *  user marker
@@ -106,12 +95,12 @@ export class MapPage {
         this.loadTagData(); // Load all the data from firebase once
         this.loadMap();
         this.getLatLng();
-        this.placeTimedMarker();
+        this.addTimedEvent('UH End of Year Bash','A end of the year party for all UH Manoa students!', 'http://curvysewingcollective.com/wp-content/uploads/2017/10/CSC-Party-Time-400x400.png', 21.296967, -157.821814, 5);
     }
 
-    /**************** IONIC SEARCH MENU FUNCTIONS ****************/
+    /***************** IONIC SEARCH MENU FUNCTIONS ****************/
 
-    /*
+    /**
      * Searches for a point in the ionic search menu
      * @param {string} input - Value given by the user through the ionic search menu
      * @return none
@@ -128,7 +117,7 @@ export class MapPage {
         }
     }
 
-    /*
+    /**
      * Stops the search menu
      * @param none
      * @return none
@@ -138,7 +127,7 @@ export class MapPage {
         this.isSearching = false;
     }
 
-    /*
+    /**
      * Turns isSeacrching to true and shows all the matching searches in the ionic menu
      * @param none
      * @return none
@@ -148,9 +137,9 @@ export class MapPage {
         this.isSearching = true;
     }
 
-    /**************** RETRIEVING DATA FROM FIREBASE FUNCTIONS ****************/
+    /***************** RETRIEVING DATA FROM FIREBASE FUNCTIONS ****************/
 
-    /*
+    /**
      * Lodas locationList for populating selector menus Called in loadTags();
      * @param - none
      * @return - none
@@ -165,7 +154,7 @@ export class MapPage {
         }
     }
 
-    /*
+    /**
      * Retrieves the tags from Firebase and populates them on the map
      * @param - none
      * @return - none
@@ -174,7 +163,7 @@ export class MapPage {
     loadTagData() {
         // Load the tag data into the geoMarkers variable
         this.geoMarkers = [];
-        this.ref.once("value")
+        this.database.masterData.once("value")
 
             .then((dataPoints) => {
 
@@ -210,9 +199,9 @@ export class MapPage {
 
     }
 
-    /**************** MARKER PLACING FUNCTIONS ****************/
+    /***************** MARKER PLACING FUNCTIONS ****************/
 
-    /*
+    /**
      * Adds a marker / point to the map containing the info in the form of a info window
      * @param {object} location - Location object containing necessary location data
      * @param {int} location.key - Key index that the location is at (used to retrieve indexed images)
@@ -237,7 +226,7 @@ export class MapPage {
             position: this.endValue,
             title: 'University of Hawaii at Manoa',
             map: this.map,
-            icon: this.icons[location.type],
+            icon: this.mapProvider.icons[location.type],
         });
 
         let info = this.getInfoWindowData(location);
@@ -262,7 +251,7 @@ export class MapPage {
         }));
     }
 
-    /*
+    /**
      * Adds a marker / point to the map from the explore page
      * @param {object} location - Location object containing necessary location data
      * @param {int} location.key - Key index that the location is at (used to retrieve indexed images)
@@ -283,7 +272,7 @@ export class MapPage {
             position: this.endValue,
             title: 'University of Hawaii at Manoa',
             map: this.map,
-            icon: this.icons[location.type],
+            icon: this.mapProvider.icons[location.type],
         });
 
         let info = this.getInfoWindowData(location);
@@ -303,7 +292,7 @@ export class MapPage {
         }));
     }
 
-    /*
+    /**
      * Creates info window when a marker is selected or added
      * @param {Object} location - Location that is selected
      * @param {string} location.name - Name of the selected location
@@ -367,7 +356,7 @@ export class MapPage {
         return infoContent;
     }
 
-    /*
+    /**
      * Places the current location marker of the user
      * @param none
      * @return none
@@ -395,9 +384,67 @@ export class MapPage {
         }, 2000);
     }
 
-    /**************** DIRECTION ROUTING FUNCTIONS ****************/
+    /**
+     * Adds a timed event marker to the map
+     * @param {string} event - The event name
+     * @param {string} description - The event description
+     * @param {string} image - The event image source
+     * @param {int} lat - The latitude of the event
+     * @param {int} lng - The longitude of the event
+     * @param {int} hours - The hours of the event
+     */
 
-    /*
+    addTimedEvent(event, description, image, lat, lng, hours) {
+        let infoContent = '<div class="ui grid windowContainer">';
+        infoContent += '<div id="windowHead">' + event + '</div>'
+        infoContent += '<img class="ui fluid image info" src="' + image + '">'
+        infoContent += '<div id="windowDesc">' + description + '</div>'
+        infoContent += '</div>';
+
+        let miliseconds = 3.6e+6
+        let duration = miliseconds * hours;
+        this.infoWindow = new google.maps.InfoWindow({
+            maxWidth: 400
+        });
+
+        this.marker = new google.maps.Marker({
+            position: new google.maps.LatLng(lat, lng),
+            map: this.map,
+            title: event,
+            draggable: false,
+            animation: google.maps.Animation.DROP
+        });
+        eventStash.push(this.marker);
+
+        //http://themocracy.com/wp-content/uploads/2016/12/Parties.jpg used as a sample image
+        google.maps.event.addListener(this.marker, 'click', (() => {
+            this.infoWindow.setContent(infoContent);
+            this.isInfoWindowOpen = true;
+            this.marker.setPosition({lat: lat, lng: lng});
+            this.infoWindow.open(this.map, this.marker);
+        }))
+
+        google.maps.event.addListener(this.infoWindow, 'closeclick', (() => {
+            this.isInfoWindowOpen = false;
+        }));
+
+        setTimeout(function () {
+            if (eventStash) {
+                for (let i = 0; i < eventStash.length; i++) {
+                    eventStash[i].setMap(null);
+                }
+                eventStash.length = 0;
+                this.changeIcon = false;
+            } else {
+                console.log('Stash array does not exist!');
+            }
+            // Markers disappear after 200000 seconds (proof of concept for timed events
+        }, duration);
+    }
+
+    /***************** DIRECTION ROUTING FUNCTIONS ****************/
+
+    /**
      * Creates direction display from users current location to the end location
      * @param none
      * @return none
@@ -426,7 +473,7 @@ export class MapPage {
         });
     }
 
-    /*
+    /**
      * Creates direction display from a given location to the end location
      * @param {Object} location - Location being directed from
      * @param {int} location.lat - Latitude of starting location
@@ -456,7 +503,7 @@ export class MapPage {
         });
     }
 
-    /*
+    /**
      * Initializes the Google maps directions routing from the expxlore page
      * @param none
      * @return none
@@ -474,7 +521,7 @@ export class MapPage {
         this.calculateAndDisplayExpRoute(this.directionsService, this.directionsDisplay);
     }
 
-    /*
+    /**
      * Calculates the shortest distance to the destination using Google Directions Matrix API
      * and displays the route on the map from the explore page
      * @param {object] directionsService - directionsService provided by the Google directions API
@@ -502,7 +549,7 @@ export class MapPage {
         });
     }
 
-    /*
+    /**
      * Clears direction display route by setting it to null
      * @param none
      * @return none
@@ -515,9 +562,9 @@ export class MapPage {
         }
     }
 
-    /**************** SEARCH STARTING / STOPPING FUNCTIONS ****************/
+    /***************** SEARCH STARTING / STOPPING FUNCTIONS ****************/
 
-    /*
+    /**
      * Starts search for the directional routing to a point on the map
      * Clears all routes, markers, and infoWindows on the map
      * @param none
@@ -547,7 +594,7 @@ export class MapPage {
         }
     }
 
-    /*
+    /**
      * Stops the direction routing to a point on the map
      * Sets infoWindow, routes, and searching to false to clear the map
      * @param none
@@ -561,9 +608,9 @@ export class MapPage {
         this.showCurrLocation();
     }
 
-    /**************** STREETVIEW FUNCTIONS ****************/
+    /***************** STREETVIEW FUNCTIONS ****************/
 
-    /*
+    /**
      * Toggles streetview on and off
      * @param none
      * @return none
@@ -588,7 +635,7 @@ export class MapPage {
         }
     }
 
-    /*
+    /**
      * Checks if streetview is currently in use
      * @param none
      * @return true - If streetview is in use
@@ -606,9 +653,9 @@ export class MapPage {
         }
     }
 
-    /**************** FILTERING FUNCTIONS ****************/
+    /***************** FILTERING FUNCTIONS ****************/
 
-    /*
+    /**
      * Opens the filtering menu
      * @param none
      * @return none
@@ -618,7 +665,7 @@ export class MapPage {
         this.filterSelect.open();
     }
 
-    /*
+    /**
      * Filters the markers by the category selected and adds them to the map
      * @param {string} category - Category to filter by
      * @return none
@@ -644,7 +691,7 @@ export class MapPage {
                 this.marker = new google.maps.Marker({
                     position: latLng,
                     map: this.map,
-                    icon: this.icons[data.type],
+                    icon: this.mapProvider.icons[data.type],
                 });
 
                 // Push into a Markers array
@@ -675,15 +722,16 @@ export class MapPage {
         }
 
         this.map.setCenter({lat: 21.2969, lng: -157.8171});
-        this.map.setZoom(15);
+        this.map.setZoom(17);
     }
 
-    /**************** MARKER CLEARING AND PLACING FUNCTIONS ****************/
+    /***************** MARKER CLEARING AND PLACING FUNCTIONS ****************/
 
-    /*
+    /**
      *  Called by HTML file that changes the state of the add / remove marker button
      *      calls clearAllMarkers or placeAllMarkers based on state of the button
-     *  @param - None
+     *  @param none
+     *  @return none
      */
 
     changeAllMarkers() {
@@ -695,7 +743,7 @@ export class MapPage {
         }
     }
 
-    /*
+    /**
      * Clears all data points on the map
      * @param - None
      */
@@ -711,10 +759,68 @@ export class MapPage {
             console.log('Stash array does not exist!');
         }
     }
-
-    /*
+    
+    /**
      * Places all data points on the map
-     * @param - None
+     * @param none
+     * @return none
+     */
+
+    getInfoWindowData(location) {
+        let imgSrc;
+        let infoContent = '<div class="ui grid windowContainer">';
+        if (location.name) {
+            if (location.name.toLowerCase() == 'n/a') {
+                location.name = '';
+            }
+            infoContent += '<div id="windowHead">' + location.name + '</div>'
+        }
+        if (location.key) {
+            if (location.key > 163) {
+                imgSrc = "../../assets/images/uhLogo.jpg";
+            } else {
+                if (!isNaN(location.key)) {
+                    imgSrc = "https://manoanow.org/app/map/images/" + location.key + ".png";
+                } else {
+                    imgSrc = "../../assets/images/uhLogo.jpg";
+                }
+            }
+            infoContent += '<img class="ui fluid image info" src="' + imgSrc + '">'
+        }
+        if (location.description) {
+            if (location.description.toLowerCase() == 'n/a') {
+                location.description = '';
+            }
+            else {
+                infoContent += '<div id="windowDesc">' + location.description + '</div>'
+            }
+        }
+        if (location.address) {
+            if (location.address.toLowerCase() == 'n/a') {
+                location.address = '';
+            }
+            else {
+                infoContent += '<div id="windowAddress"><span style="font-weight: bold; color: #259975;">Address: </span>' + location.address + '</div>'
+            }
+        }
+        if (location.number) {
+            if (location.number.toString().toLowerCase() == 'n/a') {
+                location.number = '';
+            }
+            else {
+                infoContent += '<div id="windowPhone"><span style="font-weight: bold; color: #259975;">Phone: </span>' + location.number + '</div>'
+            }
+        }
+        infoContent += '<i id="infoIcon">' + '&#9432;' + '</i>';
+        infoContent += '</div>';
+
+        return infoContent;
+    }
+
+    /**
+     * Places all markers on the map
+     * @param none
+     * @return none
      */
 
     placeAllMarkers() {
@@ -724,8 +830,6 @@ export class MapPage {
             maxWidth: 350
         });
 
-        this.placeTimedMarker();
-
         for (let i = 0, length = this.geoMarkers.length; i < length; i++) {
             let data = this.geoMarkers[i],
                 latLng = new google.maps.LatLng(data.lat, data.lng);
@@ -734,7 +838,7 @@ export class MapPage {
             this.marker = new google.maps.Marker({
                 position: latLng,
                 map: this.map,
-                icon: this.icons[data.type],
+                icon: this.mapProvider.icons[data.type],
             });
 
             stash.push(this.marker);
@@ -744,7 +848,7 @@ export class MapPage {
                 this.infoWindow.setContent(info);
                 this.isInfoWindowOpen = true;
                 this.marker.setPosition({lat: data.lat, lng: data.lng});
-                this.marker.setIcon(this.icons[data.type]);
+                this.marker.setIcon(this.mapProvider.icons[data.type]);
                 this.infoWindow.open(this.map, this.marker);
                 document.getElementById("infoIcon").addEventListener("click", () => {
                     this.navCtrl.push("PointsPage", data);
@@ -763,26 +867,15 @@ export class MapPage {
             this.map.setCenter({lat: 21.2969, lng: -157.8171});
             this.map.setZoom(15);
         }
-        setTimeout(function () {
-            if (stash) {
-                for (let i = 0; i < stash.length; i++) {
-                    stash[i].setMap(null);
-                }
-                stash.length = 0;
-                this.changeIcon = false;
-            } else {
-                console.log('Stash array does not exist!');
-            }
-            // Markers disappear after 200000 seconds (proof of concept for timed events
-        }, 200000);
     }
 
-    /*
-     * Gets latitude and longitude of the users current location
-     * @param - None
-     */
+    /***************** USER LOCATION FUNCTIONS ****************/
 
-    /**************** USER LOCATION FUNCTIONS ****************/
+    /**
+     * Gets latitude and longitude of the users current location
+     * @param none
+     * @return none
+     */
 
     getLatLng() {
         if (this.currentLat && this.currentLng && !this.latLng) {
@@ -817,7 +910,7 @@ export class MapPage {
         }
     }
 
-    /*
+    /**
      * Places marker at users current latitude / longitude location using HTML5 geolocation
      * @param - None
      */
@@ -832,7 +925,7 @@ export class MapPage {
         }
     }
 
-    /*
+    /**
      * Uses HTML5 Geolocation to track latitude and longitude of the user
      * @param none
      * @return none
@@ -864,7 +957,7 @@ export class MapPage {
 
     }
 
-    /*
+    /**
      * Stops the HTML5 Geolocation tracking of the user
      * @param none
      * @return none
@@ -875,328 +968,17 @@ export class MapPage {
         this.userMarker.setMap(null);
     }
 
-    /**************** MAP LOADING FUNCTIONS ****************/
+    /***************** MAP LOADING FUNCTIONS ****************/
 
-    /*
+    /**
      * Loads Google Maps API with custom features and styling
      * @param none
      * @return none
      */
 
     loadMap() {
-        this.map = new google.maps.Map(this.mapElement.nativeElement, {
-            zoom: 15,
-            zoomControl: false,
-            fullscreenControl: false,
-            center: {
-                lat: 21.2969, lng: -157.8171
-            },
-            mapTypeControlOptions: {
-                mapTypeIds: ['styled_map']
-            },
-            styles: [
-                {
-                    "featureType": "administrative.country",
-                    "elementType": "geometry.stroke",
-                    "stylers": [
-                        {
-                            "visibility": "on"
-                        }
-                    ]
-                },
-                {
-                    "featureType": "administrative.country",
-                    "elementType": "labels",
-                    "stylers": [
-                        {
-                            "visibility": "simplified"
-                        },
-                        {
-                            "lightness": "20"
-                        }
-                    ]
-                },
-                {
-                    "featureType": "administrative.province",
-                    "elementType": "geometry.stroke",
-                    "stylers": [
-                        {
-                            "visibility": "off"
-                        }
-                    ]
-                },
-                {
-                    "featureType": "administrative.province",
-                    "elementType": "labels",
-                    "stylers": [
-                        {
-                            "visibility": "simplified"
-                        },
-                        {
-                            "lightness": "10"
-                        }
-                    ]
-                },
-                {
-                    "featureType": "administrative.locality",
-                    "elementType": "geometry.stroke",
-                    "stylers": [
-                        {
-                            "visibility": "on"
-                        }
-                    ]
-                },
-                {
-                    "featureType": "administrative.locality",
-                    "elementType": "labels",
-                    "stylers": [
-                        {
-                            "visibility": "simplified"
-                        },
-                        {
-                            "lightness": "25"
-                        }
-                    ]
-                },
-                {
-                    "featureType": "landscape",
-                    "elementType": "all",
-                    "stylers": [
-                        {
-                            "hue": "#ffbb00"
-                        },
-                        {
-                            "saturation": 43.400000000000006
-                        },
-                        {
-                            "lightness": 37.599999999999994
-                        },
-                        {
-                            "gamma": 1
-                        }
-                    ]
-                },
-                {
-                    "featureType": "poi",
-                    "elementType": "all",
-                    "stylers": [
-                        {
-                            "hue": "#00FF6A"
-                        },
-                        {
-                            "saturation": -1.0989010989011234
-                        },
-                        {
-                            "lightness": 11.200000000000017
-                        },
-                        {
-                            "gamma": 1
-                        }
-                    ]
-                },
-                // Remove the next five if we want labels back
-                {
-                    "featureType": "poi",
-                    "elementType": "labels",
-                    "stylers": [
-                        {
-                            "visibility": "off"
-                        }
-                    ]
-                },
-                {
-                    "featureType": "poi",
-                    "elementType": "labels.text",
-                    "stylers": [
-                        {
-                            "visibility": "off"
-                        }
-                    ]
-                },
-                {
-                    "featureType": "poi",
-                    "elementType": "labels.text.fill",
-                    "stylers": [
-                        {
-                            "visibility": "simplified"
-                        }
-                    ]
-                },
-                {
-                    "featureType": "poi",
-                    "elementType": "labels.text.stroke",
-                    "stylers": [
-                        {
-                            "visibility": "off"
-                        }
-                    ]
-                },
-                {
-                    "featureType": "poi",
-                    "elementType": "labels.icon",
-                    "stylers": [
-                        {
-                            "visibility": "off"
-                        }
-                    ]
-                },
-
-                {
-                    "featureType": "road",
-                    "elementType": "geometry",
-                    "stylers": [
-                        {
-                            "visibility": "on"
-                        },
-                        {
-                            "lightness": "30"
-                        }
-                    ]
-                },
-                {
-                    "featureType": "road.highway",
-                    "elementType": "all",
-                    "stylers": [
-                        {
-                            "hue": "#FFC200"
-                        },
-                        {
-                            "saturation": -61.8
-                        },
-                        {
-                            "lightness": 45.599999999999994
-                        },
-                        {
-                            "gamma": 1
-                        }
-                    ]
-                },
-                {
-                    "featureType": "road.highway.controlled_access",
-                    "elementType": "geometry.fill",
-                    "stylers": [
-                        {
-                            "visibility": "on"
-                        },
-                        {
-                            "color": "#24a95a"
-                        },
-                        {
-                            "lightness": "29"
-                        },
-                        {
-                            "saturation": "-58"
-                        }
-                    ]
-                },
-                {
-                    "featureType": "road.arterial",
-                    "elementType": "all",
-                    "stylers": [
-                        {
-                            "hue": "#FF0300"
-                        },
-                        {
-                            "saturation": -100
-                        },
-                        {
-                            "lightness": 51.19999999999999
-                        },
-                        {
-                            "gamma": 1
-                        }
-                    ]
-                },
-                {
-                    "featureType": "road.arterial",
-                    "elementType": "geometry.fill",
-                    "stylers": [
-                        {
-                            "visibility": "on"
-                        }
-                    ]
-                },
-                {
-                    "featureType": "road.local",
-                    "elementType": "all",
-                    "stylers": [
-                        {
-                            "hue": "#FF0300"
-                        },
-                        {
-                            "saturation": -100
-                        },
-                        {
-                            "lightness": 52
-                        },
-                        {
-                            "gamma": 1
-                        }
-                    ]
-                },
-                {
-                    "featureType": "transit.station",
-                    "elementType": "geometry.fill",
-                    "stylers": [
-                        {
-                            "visibility": "on"
-                        }
-                    ]
-                },
-                {
-                    "featureType": "transit.station.bus",
-                    "elementType": "geometry.fill",
-                    "stylers": [
-                        {
-                            "visibility": "on"
-                        }
-                    ]
-                },
-                {
-                    "featureType": "transit.station.bus",
-                    "elementType": "labels.icon",
-                    "stylers": [
-                        {
-                            "visibility": "on"
-                        },
-                        {
-                            "hue": "#00b1ff"
-                        }
-                    ]
-                },
-                {
-                    "featureType": "water",
-                    "elementType": "all",
-                    "stylers": [
-                        {
-                            "hue": "#00ffda"
-                        },
-                        {
-                            "saturation": "-50"
-                        },
-                        {
-                            "lightness": "25"
-                        },
-                        {
-                            "gamma": 1
-                        }
-                    ]
-                },
-                {
-                    "featureType": "water",
-                    "elementType": "labels",
-                    "stylers": [
-                        {
-                            "visibility": "off"
-                        },
-                        {
-                            "lightness": "30"
-                        }
-                    ]
-                }
-            ]
-        });
-
+        //
+        this.map = new google.maps.Map(this.mapElement.nativeElement, this.mapProvider.mapStyle);
         this.panorama = new google.maps.StreetViewPanorama(
             document.getElementById('map'), {
                 addressControl: false,
@@ -1224,9 +1006,10 @@ export class MapPage {
 
         });
         this.userMarker.setAnimation(google.maps.Animation.BOUNCE);
+        this.map.setZoom(17);
     }
 
-    /*
+    /**
      * Sets up the search parameters for fuzzy search
      */
 
@@ -1237,7 +1020,7 @@ export class MapPage {
         shouldSort: true,
     };
 
-    /*
+    /**
      * Holds icon SVG data and styling
      */
 

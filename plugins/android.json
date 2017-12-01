@@ -7,31 +7,31 @@
         "files": {}
     },
     "installed_plugins": {
-        "cordova-plugin-device": {
-            "PACKAGE_NAME": "io.ionic.starter"
-        },
-        "cordova-plugin-splashscreen": {
-            "PACKAGE_NAME": "io.ionic.starter"
-        },
-        "cordova-plugin-statusbar": {
-            "PACKAGE_NAME": "io.ionic.starter"
-        },
-        "cordova-plugin-whitelist": {
-            "PACKAGE_NAME": "io.ionic.starter"
-        },
-        "ionic-plugin-keyboard": {
-            "PACKAGE_NAME": "io.ionic.starter"
-        },
         "cordova-plugin-console": {
-            "PACKAGE_NAME": "io.ionic.starter"
+            "PACKAGE_NAME": "com.herokuapp.wayfinder"
+        },
+        "cordova-plugin-device": {
+            "PACKAGE_NAME": "com.herokuapp.wayfinder"
         },
         "cordova-plugin-geolocation": {
-            "PACKAGE_NAME": "io.ionic.starter"
+            "PACKAGE_NAME": "com.herokuapp.wayfinder"
+        },
+        "cordova-plugin-splashscreen": {
+            "PACKAGE_NAME": "com.herokuapp.wayfinder"
+        },
+        "cordova-plugin-statusbar": {
+            "PACKAGE_NAME": "com.herokuapp.wayfinder"
+        },
+        "cordova-plugin-whitelist": {
+            "PACKAGE_NAME": "com.herokuapp.wayfinder"
+        },
+        "ionic-plugin-keyboard": {
+            "PACKAGE_NAME": "com.herokuapp.wayfinder"
         }
     },
     "dependent_plugins": {
         "cordova-plugin-compat": {
-            "PACKAGE_NAME": "io.ionic.starter"
+            "PACKAGE_NAME": "com.herokuapp.wayfinder"
         }
     }
 }

@@ -22,6 +22,7 @@ import { Geolocation } from '@ionic-native/geolocation';
 import { AuthProvider } from '../providers/auth/auth';
 import { DistanceMatrixService } from "../services/distanceMatrixService/distanceMatrixService";
 import { FirebaseProvider } from '../providers/firebase/firebase';
+import { MapProvider } from '../providers/map/map';
 
 @NgModule({
     declarations: [
@@ -62,7 +63,8 @@ import { FirebaseProvider } from '../providers/firebase/firebase';
         },
         AuthProvider,
         DistanceMatrixService,
-    FirebaseProvider
+    FirebaseProvider,
+    MapProvider
     ]
 })
 export class AppModule {}
