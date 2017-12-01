@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef } from '@angular/core';
+import { Component} from '@angular/core';
 import { NavController, ToastController, NavParams } from 'ionic-angular';
 import { LoadingController } from 'ionic-angular';
 import { NgForm } from '@angular/forms';
@@ -47,11 +47,29 @@ export class SubmitDataPage {
         }
     }
 
+    /***************** PAGE LOADING FUNCTION ****************/
+
+    /**
+     *  Checks a token that is set if the user was directed from the "Use Current Location" option
+     *  Gets the user's location
+     *  @param none
+     *  @return none
+     */
+
     ionViewDidLoad() {
       if(this.token){
           this.getCurrLocation();
       }
     }
+
+    /***************** SUBMIT USER POINT FUNCTION ****************/
+
+    /**
+     *  Takes data from the user submitted form and submits it into the User Input firebase db
+     *  @param {Object} - NgForm data
+     *  @return none
+     */
+
     onSubmit(formData: NgForm) {
         for (var element in formData.value) {
             if(formData.value[element] === undefined){
@@ -68,7 +86,14 @@ export class SubmitDataPage {
         this.navCtrl.setRoot(MapPage);
     }
 
-    // Uses HTML5 navigator to get lat/long
+    /***************** GET USER'S LOCATION FUNCTION ****************/
+
+    /**
+     *  Gets the user's current location
+     *  @param none
+     *  @return none
+     */
+
     getCurrLocation () {
         this.loader = this.loading.create({
             content: "Getting Coordinates..."
@@ -86,6 +111,15 @@ export class SubmitDataPage {
 
         }
     }
+
+    /***************** GET ADDRESS FUNCTION ****************/
+
+    /**
+     *  Uses Google Maps API to find an associated address to the submitted location
+     *  @param none
+     *  @return none
+     */
+
     getAddress() {
         this.url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${this.latitude},${this.longitude}&key=AIzaSyCeP_xxvneWjyU_0EIg5slVUl3I6TtH4oA`;
 
