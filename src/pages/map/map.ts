@@ -119,7 +119,12 @@ export class MapPage {
         this.isSearching = true;
     }
 
-    // Load up locationsList for populating selector menus. Called in loadTags();
+    /*
+     * Lodas locationList for populating selector menus Called in loadTags();
+     * @param - none
+     * @return - none
+     */
+
     loadLocationsList() {
         for (let i = 0; i <= this.geoMarkers.length - 1; i++) {
             this.locationsList.push({
@@ -129,7 +134,12 @@ export class MapPage {
         }
     }
 
-    // Retrieves the tags from Firebase and populates them on map.
+    /*
+     * Retrieves the tags from Firebase and populates them on the map
+     * @param - none
+     * @return - none
+     */
+
     loadTagData() {
         // Load the tag data into the geoMarkers variable
         this.geoMarkers = [];
@@ -169,13 +179,18 @@ export class MapPage {
 
     }
 
+    /*
+     * Adds a marker / point to the map containing the info in the form of a info window
+     * @param {object} location - Location object containing necessary location data
+     * @param {int} location.key - Key index that the location is at (used to retrieve indexed images)
+     * @param {int} location.lat - Latitude value of the given location
+     * @param {int} location.lng - Longitude value of the given location
+     * @param {string} location.type - Holds info for the icon type of the marker
+     * @param {string} location.name - Name of the given location
+     * @return none
+     */
 
-    // Pass in the entire object now that key field holds image index
     addMarker(location) {
-        if (this.marker) {
-            this.clearStarterMarker();
-        }
-
         this.stopSearch();
 
         const geoData = this.geoMarkers.slice();
@@ -211,15 +226,21 @@ export class MapPage {
 
         google.maps.event.addListener(this.infoWindow, 'closeclick', (() => {
             this.isInfoWindowOpen = false;
-            this.clearStarterMarker();
         }));
     }
 
-    addExpMarker(index) {
-        if (this.marker) {
-            this.clearStarterMarker();
-        }
+    /*
+     * Adds a marker / point to the map from the explore page
+     * @param {object} location - Location object containing necessary location data
+     * @param {int} location.key - Key index that the location is at (used to retrieve indexed images)
+     * @param {int} location.lat - Latitude value of the given location
+     * @param {int} location.lng - Longitude value of the given location
+     * @param {string} location.type - Holds info for the icon type of the marker
+     * @param {string} location.name - Name of the given location
+     * @return none
+     */
 
+    addExpMarker(index) {
         const geoData = this.geoMarkers.slice();
         const location = geoData[index];
 
@@ -246,13 +267,14 @@ export class MapPage {
 
         google.maps.event.addListener(this.infoWindow, 'closeclick', (() => {
             this.isInfoWindowOpen = false;
-            this.clearStarterMarker();
         }));
     }
 
-    clearStarterMarker() {
-        this.marker.setMap(null);
-    }
+    /*
+     * Clears direction display route by setting it to null
+     * @param none
+     * @return none
+     */
 
     clearRoute() {
         if (this.directionsDisplay != null) {
@@ -261,7 +283,15 @@ export class MapPage {
         }
     }
 
+    /*
+     * Calculates the shortest distance to the destination using Google Directions Matrix API
+     * and displays the route on the map
+     * @param
+     */
+
     calculateAndDisplayRoute(directionsService, directionsDisplay, sValue, eValue) {
+        console.log(directionsService);
+        console.log(directionsDisplay);
         const geoData = this.geoMarkers.slice();
         let origin = {lat: geoData[sValue].lat, lng: geoData[sValue].lng};
         let destination = {lat: geoData[eValue].lat, lng: geoData[eValue].lng};
@@ -280,9 +310,6 @@ export class MapPage {
 
     // For explore page routing
     createExpRoute() {
-        /*if (this.marker) {
-         this.clearStarterMarker();
-         }*/
         let renderOptions = {
             map: this.map,
             suppressMarkers: true
@@ -323,7 +350,7 @@ export class MapPage {
     searchStart() {
         if (!this.inRoute) {
             if (this.marker) {
-                this.clearStarterMarker();
+                this.marker.setMap(null);
             }
             this.clearAllMarkers();
             this.inRoute = true;
@@ -333,7 +360,7 @@ export class MapPage {
             this.clearRoute();
             if (this.infoWindow) {
                 this.infoWindow.close();
-                this.clearStarterMarker();
+                this.marker.setMap(null);
             }
             this.isInfoWindowOpen = false;
             this.inRoute = false;
