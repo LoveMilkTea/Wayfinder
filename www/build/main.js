@@ -1262,14 +1262,18 @@ let MapPage = class MapPage {
         this.isInfoWindowOpen = false;
         this.searchingStart = false;
         this.inRoute = false;
-        // Set up search params for the fuzzy search
+        /*
+         * Sets up the search parameters for fuzzy search
+         */
         this.fuseOptions = {
             caseSensitive: false,
             keys: ['address', 'description', 'name', 'type'],
             threshold: 0.5,
             shouldSort: true,
         };
-        // Holds icon SVG data and styling.
+        /*
+         * Holds icon SVG data and styling
+         */
         this.icons = {
             food: {
                 // Spoon and fork icon
@@ -1383,12 +1387,26 @@ let MapPage = class MapPage {
         this.db = this.App.database();
         this.ref = this.db.ref("testPoints");
     }
+    /**************** PAGE LOADING FUNCTION ****************/
+    /*
+     * Prepares the map page for use (onload)
+     *  Loads all the data from firebase, loads the map, gets user geolocation, and places the
+     *  user marker
+     *  @param none
+     *  @return none
+     */
     ionViewDidLoad() {
         this.loadTagData(); // Load all the data from firebase once
         this.loadMap();
         this.getLatLng();
         this.placeTimedMarker();
     }
+    /**************** IONIC SEARCH MENU FUNCTIONS ****************/
+    /*
+     * Searches for a point in the ionic search menu
+     * @param {string} input - Value given by the user through the ionic search menu
+     * @return none
+     */
     searchPoints(input) {
         this.isSearching = true;
         let fuse = new __WEBPACK_IMPORTED_MODULE_6_fuse_js__(this.searchList, this.fuseOptions);
@@ -1399,12 +1417,23 @@ let MapPage = class MapPage {
             this.searchList = fuse.search(input);
         }
     }
+    /*
+     * Stops the search menu
+     * @param none
+     * @return none
+     */
     stopSearch() {
         this.isSearching = false;
     }
+    /*
+     * Turns isSeacrching to true and shows all the matching searches in the ionic menu
+     * @param none
+     * @return none
+     */
     showSearch() {
         this.isSearching = true;
     }
+    /**************** RETRIEVING DATA FROM FIREBASE FUNCTIONS ****************/
     /*
      * Lodas locationList for populating selector menus Called in loadTags();
      * @param - none
@@ -1456,6 +1485,7 @@ let MapPage = class MapPage {
             this.loadLocationsList();
         });
     }
+    /**************** MARKER PLACING FUNCTIONS ****************/
     /*
      * Adds a marker / point to the map containing the info in the form of a info window
      * @param {object} location - Location object containing necessary location data
@@ -1533,239 +1563,6 @@ let MapPage = class MapPage {
         }));
     }
     /*
-     * Clears direction display route by setting it to null
-     * @param none
-     * @return none
-     */
-    clearRoute() {
-        if (this.directionsDisplay != null) {
-            this.directionsDisplay.setMap(null);
-            this.directionsDisplay = null;
-        }
-    }
-    /*
-     * Calculates the shortest distance to the destination using Google Directions Matrix API
-     * and displays the route on the map
-     * @param
-     */
-    calculateAndDisplayRoute(directionsService, directionsDisplay, sValue, eValue) {
-        console.log(directionsService);
-        console.log(directionsDisplay);
-        const geoData = this.geoMarkers.slice();
-        let origin = { lat: geoData[sValue].lat, lng: geoData[sValue].lng };
-        let destination = { lat: geoData[eValue].lat, lng: geoData[eValue].lng };
-        directionsService.route({
-            origin: origin,
-            destination: destination,
-            travelMode: 'WALKING'
-        }, function (response, status) {
-            if (status === 'OK') {
-                directionsDisplay.setDirections(response);
-            }
-            else {
-                window.alert('Directions request failed due to ' + status);
-            }
-        });
-    }
-    // For explore page routing
-    createExpRoute() {
-        let renderOptions = {
-            map: this.map,
-            suppressMarkers: true
-        };
-        this.clearRoute();
-        this.inRoute = true;
-        this.isInfoWindowOpen = true;
-        this.directionsService = new google.maps.DirectionsService;
-        this.directionsDisplay = new google.maps.DirectionsRenderer(renderOptions);
-        this.directionsDisplay.setMap(this.map);
-        this.calculateAndDisplayExpRoute(this.directionsService, this.directionsDisplay);
-    }
-    // For explore page routing
-    calculateAndDisplayExpRoute(directionsService, directionsDisplay) {
-        const geoData = this.geoMarkers;
-        let origin = { lat: this.currentLat, lng: this.currentLng };
-        let destination = { lat: geoData[this.exploreIndex].lat, lng: geoData[this.exploreIndex].lng };
-        this.addMarker(geoData[this.exploreIndex]);
-        directionsService.route({
-            origin: origin,
-            destination: destination,
-            travelMode: 'WALKING'
-        }, function (response, status) {
-            if (status === 'OK') {
-                directionsDisplay.setDirections(response);
-            }
-            else {
-                window.alert('Directions request failed due to ' + status);
-            }
-        });
-    }
-    searchStart() {
-        if (!this.inRoute) {
-            if (this.marker) {
-                this.marker.setMap(null);
-            }
-            this.clearAllMarkers();
-            this.inRoute = true;
-            this.searchingStart = true;
-        }
-        else {
-            this.clearRoute();
-            if (this.infoWindow) {
-                this.infoWindow.close();
-                this.marker.setMap(null);
-            }
-            this.isInfoWindowOpen = false;
-            this.inRoute = false;
-            this.searchingStart = false;
-            this.stopTrack();
-            this.showCurrLocation();
-        }
-    }
-    searchStop() {
-        this.isInfoWindowOpen = false;
-        this.inRoute = false;
-        this.searchingStart = false;
-        this.showCurrLocation();
-    }
-    /*
-     * Creates direction display from users current location to the end location
-     * @param None
-     */
-    directFromCurrentLocation() {
-        this.searchingStart = false;
-        this.directionsService = new google.maps.DirectionsService;
-        this.directionsDisplay = new google.maps.DirectionsRenderer;
-        this.directionsDisplay.setMap(this.map);
-        let origin = this.latLng;
-        let destination = this.endValue;
-        this.directionsService.route({
-            origin: origin,
-            destination: destination,
-            travelMode: 'WALKING'
-        }, (response, status) => {
-            if (status === 'OK') {
-                this.directionsDisplay.setDirections(response);
-            }
-            else {
-                window.alert('Directions request failed due to ' + status);
-            }
-        });
-    }
-    /*
-     * Creates direction display from a given location to the end location
-     * @param {Object} location - Location being directed from
-     * @param {int} location.lat - Latitude of starting location
-     * @param {int} location.lng - Longitude of starting location
-     */
-    directFromLocation(location) {
-        this.searchingStart = false;
-        this.directionsService = new google.maps.DirectionsService;
-        this.directionsDisplay = new google.maps.DirectionsRenderer;
-        this.directionsDisplay.setMap(this.map);
-        let origin = { lat: location.lat, lng: location.lng };
-        let destination = this.endValue;
-        this.directionsService.route({
-            origin: origin,
-            destination: destination,
-            travelMode: 'WALKING'
-        }, (response, status) => {
-            if (status === 'OK') {
-                this.directionsDisplay.setDirections(response);
-            }
-            else {
-                window.alert('Directions request failed due to ' + status);
-            }
-        });
-    }
-    // Could be useful if needed.
-    toggleStreetView() {
-        this.panorama.setPosition(this.endValue);
-        if (!this.inStreetView()) {
-            if (this.infoWindow && this.marker && this.streetTag) {
-                this.infoWindow.close();
-                this.marker.setMap(this.panorama);
-                this.streetTag.open(this.panorama, this.marker);
-            }
-            this.panorama.setVisible(true);
-        }
-        else {
-            if (this.infoWindow && this.marker && this.streetTag) {
-                this.streetTag.close();
-                this.marker.setMap(this.map);
-                this.infoWindow.open(this.map, this.marker);
-            }
-            this.panorama.setVisible(false);
-        }
-    }
-    inStreetView() {
-        if (this.panorama) {
-            if (this.panorama.getVisible()) {
-                return true;
-            }
-            else {
-                return false;
-            }
-        }
-    }
-    // Gets data from locations.json file if needed
-    getGeoData() {
-        this.http.get('assets/data/locations.json')
-            .map((res) => res.json())
-            .subscribe(data => {
-            this.jsonData = data;
-        }, (rej) => {
-            console.error("Could not load local data", rej);
-        });
-    }
-    doFilter() {
-        this.filterSelect.open();
-    }
-    filterMarker(category) {
-        let criteria = category.charAt(0).toLowerCase() + category.slice(1);
-        // For "dual-layered" filtering clean out the "changeAllMarkers call"
-        this.clearAllMarkers();
-        this.changeIcon = true;
-        this.infoWindow = new google.maps.InfoWindow({
-            maxWidth: 350
-        });
-        for (let i = 0, length = this.geoMarkers.length; i < length; i++) {
-            let data = this.geoMarkers[i], latLng = new google.maps.LatLng(data.lat, data.lng);
-            if (data.type === criteria) {
-                // Creating a marker and putting it on the map
-                this.marker = new google.maps.Marker({
-                    position: latLng,
-                    map: this.map,
-                    icon: this.icons[data.type],
-                });
-                // Push into a Markers array
-                stash.push(this.marker);
-                let info = this.getInfoWindowData(data);
-                google.maps.event.addListener(this.marker, 'click', (() => {
-                    this.infoWindow.setContent(info);
-                    this.isInfoWindowOpen = true;
-                    this.marker.setPosition({ lat: data.lat, lng: data.lng });
-                    this.infoWindow.open(this.map, this.marker);
-                    document.getElementById("infoIcon").addEventListener("click", () => {
-                        this.navCtrl.push("PointsPage", data);
-                    });
-                    this.endValue = latLng;
-                    this.streetTag = new google.maps.InfoWindow({
-                        content: '<div style="color: #259975" class="street-tag">' + data.name + '</div>',
-                    });
-                }));
-                google.maps.event.addListener(this.infoWindow, 'closeclick', (() => {
-                    this.isInfoWindowOpen = false;
-                }));
-            }
-            else {
-                console.log("Category: " + criteria + " does not exist!");
-            }
-        }
-        this.map.setCenter({ lat: 21.2969, lng: -157.8171 });
-        this.map.setZoom(15);
-    }
-    /*
      * Creates info window when a marker is selected or added
      * @param {Object} location - Location that is selected
      * @param {string} location.name - Name of the selected location
@@ -1828,6 +1625,11 @@ let MapPage = class MapPage {
         infoContent += '</div>';
         return infoContent;
     }
+    /*
+     * Places the current location marker of the user
+     * @param none
+     * @return none
+     */
     placeTimedMarker() {
         var uh = { lat: 21.3159, lng: 157.8033 };
         this.marker = new google.maps.Marker({
@@ -1849,6 +1651,249 @@ let MapPage = class MapPage {
             }
         }, 2000);
     }
+    /**************** DIRECTION ROUTING FUNCTIONS ****************/
+    /*
+     * Creates direction display from users current location to the end location
+     * @param none
+     * @return none
+     */
+    directFromCurrentLocation() {
+        this.searchingStart = false;
+        this.directionsService = new google.maps.DirectionsService;
+        this.directionsDisplay = new google.maps.DirectionsRenderer;
+        this.directionsDisplay.setMap(this.map);
+        let origin = this.latLng;
+        let destination = this.endValue;
+        this.directionsService.route({
+            origin: origin,
+            destination: destination,
+            travelMode: 'WALKING'
+        }, (response, status) => {
+            if (status === 'OK') {
+                this.directionsDisplay.setDirections(response);
+            }
+            else {
+                window.alert('Directions request failed due to ' + status);
+            }
+        });
+    }
+    /*
+     * Creates direction display from a given location to the end location
+     * @param {Object} location - Location being directed from
+     * @param {int} location.lat - Latitude of starting location
+     * @param {int} location.lng - Longitude of starting location
+     */
+    directFromLocation(location) {
+        this.searchingStart = false;
+        this.directionsService = new google.maps.DirectionsService;
+        this.directionsDisplay = new google.maps.DirectionsRenderer;
+        this.directionsDisplay.setMap(this.map);
+        let origin = { lat: location.lat, lng: location.lng };
+        let destination = this.endValue;
+        this.directionsService.route({
+            origin: origin,
+            destination: destination,
+            travelMode: 'WALKING'
+        }, (response, status) => {
+            if (status === 'OK') {
+                this.directionsDisplay.setDirections(response);
+            }
+            else {
+                window.alert('Directions request failed due to ' + status);
+            }
+        });
+    }
+    /*
+     * Initializes the Google maps directions routing from the expxlore page
+     * @param none
+     * @return none
+     */
+    createExpRoute() {
+        this.clearRoute();
+        this.inRoute = true;
+        this.isInfoWindowOpen = true;
+        this.directionsService = new google.maps.DirectionsService;
+        this.directionsDisplay = new google.maps.DirectionsRenderer;
+        this.directionsDisplay.setMap(this.map);
+        this.calculateAndDisplayExpRoute(this.directionsService, this.directionsDisplay);
+    }
+    /*
+     * Calculates the shortest distance to the destination using Google Directions Matrix API
+     * and displays the route on the map from the explore page
+     * @param {object] directionsService - directionsService provided by the Google directions API
+     * @param {object} directionsDisplay - directionsDisplay provided by the Google directions API
+     * @return none
+     */
+    calculateAndDisplayExpRoute(directionsService, directionsDisplay) {
+        const geoData = this.geoMarkers;
+        let origin = { lat: this.currentLat, lng: this.currentLng };
+        let destination = { lat: geoData[this.exploreIndex].lat, lng: geoData[this.exploreIndex].lng };
+        this.addMarker(geoData[this.exploreIndex]);
+        directionsService.route({
+            origin: origin,
+            destination: destination,
+            travelMode: 'WALKING'
+        }, function (response, status) {
+            if (status === 'OK') {
+                directionsDisplay.setDirections(response);
+            }
+            else {
+                window.alert('Directions request failed due to ' + status);
+            }
+        });
+    }
+    /*
+     * Clears direction display route by setting it to null
+     * @param none
+     * @return none
+     */
+    clearRoute() {
+        if (this.directionsDisplay != null) {
+            this.directionsDisplay.setMap(null);
+            this.directionsDisplay = null;
+        }
+    }
+    /**************** SEARCH STARTING / STOPPING FUNCTIONS ****************/
+    /*
+     * Starts search for the directional routing to a point on the map
+     * Clears all routes, markers, and infoWindows on the map
+     * @param none
+     * @return none
+     */
+    searchStart() {
+        if (!this.inRoute) {
+            if (this.marker) {
+                this.marker.setMap(null);
+            }
+            this.clearAllMarkers();
+            this.inRoute = true;
+            this.searchingStart = true;
+        }
+        else {
+            this.clearRoute();
+            if (this.infoWindow) {
+                this.infoWindow.close();
+                this.marker.setMap(null);
+            }
+            this.isInfoWindowOpen = false;
+            this.inRoute = false;
+            this.searchingStart = false;
+            this.stopTrack();
+            this.showCurrLocation();
+        }
+    }
+    /*
+     * Stops the direction routing to a point on the map
+     * Sets infoWindow, routes, and searching to false to clear the map
+     * @param none
+     * @return none
+     */
+    searchStop() {
+        this.isInfoWindowOpen = false;
+        this.inRoute = false;
+        this.searchingStart = false;
+        this.showCurrLocation();
+    }
+    /**************** STREETVIEW FUNCTIONS ****************/
+    /*
+     * Toggles streetview on and off
+     * @param none
+     * @return none
+     */
+    toggleStreetView() {
+        this.panorama.setPosition(this.endValue);
+        if (!this.inStreetView()) {
+            if (this.infoWindow && this.marker && this.streetTag) {
+                this.infoWindow.close();
+                this.marker.setMap(this.panorama);
+                this.streetTag.open(this.panorama, this.marker);
+            }
+            this.panorama.setVisible(true);
+        }
+        else {
+            if (this.infoWindow && this.marker && this.streetTag) {
+                this.streetTag.close();
+                this.marker.setMap(this.map);
+                this.infoWindow.open(this.map, this.marker);
+            }
+            this.panorama.setVisible(false);
+        }
+    }
+    /*
+     * Checks if streetview is currently in use
+     * @param none
+     * @return true - If streetview is in use
+     *         false - If streetview is not in use
+     */
+    inStreetView() {
+        if (this.panorama) {
+            if (this.panorama.getVisible()) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+    }
+    /**************** FILTERING FUNCTIONS ****************/
+    /*
+     * Opens the filtering menu
+     * @param none
+     * @return none
+     */
+    doFilter() {
+        this.filterSelect.open();
+    }
+    /*
+     * Filters the markers by the category selected and adds them to the map
+     * @param {string} category - Category to filter by
+     * @return none
+     */
+    filterMarker(category) {
+        let criteria = category.charAt(0).toLowerCase() + category.slice(1);
+        // For "dual-layered" filtering clean out the "changeAllMarkers call"
+        this.clearAllMarkers();
+        this.changeIcon = true;
+        this.infoWindow = new google.maps.InfoWindow({
+            maxWidth: 350
+        });
+        for (let i = 0, length = this.geoMarkers.length; i < length; i++) {
+            let data = this.geoMarkers[i], latLng = new google.maps.LatLng(data.lat, data.lng);
+            if (data.type === criteria) {
+                // Creating a marker and putting it on the map
+                this.marker = new google.maps.Marker({
+                    position: latLng,
+                    map: this.map,
+                    icon: this.icons[data.type],
+                });
+                // Push into a Markers array
+                stash.push(this.marker);
+                let info = this.getInfoWindowData(data);
+                google.maps.event.addListener(this.marker, 'click', (() => {
+                    this.infoWindow.setContent(info);
+                    this.isInfoWindowOpen = true;
+                    this.marker.setPosition({ lat: data.lat, lng: data.lng });
+                    this.infoWindow.open(this.map, this.marker);
+                    document.getElementById("infoIcon").addEventListener("click", () => {
+                        this.navCtrl.push("PointsPage", data);
+                    });
+                    this.endValue = latLng;
+                    this.streetTag = new google.maps.InfoWindow({
+                        content: '<div style="color: #259975" class="street-tag">' + data.name + '</div>',
+                    });
+                }));
+                google.maps.event.addListener(this.infoWindow, 'closeclick', (() => {
+                    this.isInfoWindowOpen = false;
+                }));
+            }
+            else {
+                console.log("Category: " + criteria + " does not exist!");
+            }
+        }
+        this.map.setCenter({ lat: 21.2969, lng: -157.8171 });
+        this.map.setZoom(15);
+    }
+    /**************** MARKER CLEARING AND PLACING FUNCTIONS ****************/
     /*
      *  Called by HTML file that changes the state of the add / remove marker button
      *      calls clearAllMarkers or placeAllMarkers based on state of the button
@@ -1938,6 +1983,7 @@ let MapPage = class MapPage {
      * Gets latitude and longitude of the users current location
      * @param - None
      */
+    /**************** USER LOCATION FUNCTIONS ****************/
     getLatLng() {
         if (this.currentLat && this.currentLng && !this.latLng) {
             this.latLng = {
@@ -1980,7 +2026,11 @@ let MapPage = class MapPage {
             this.map.setZoom(17);
         }
     }
-    // Use HTML5 Geolocation to track lat/lng
+    /*
+     * Uses HTML5 Geolocation to track latitude and longitude of the user
+     * @param none
+     * @return none
+     */
     trackLocation() {
         this.navId = navigator.geolocation.watchPosition((position) => {
             var newPoint = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
@@ -1998,13 +2048,20 @@ let MapPage = class MapPage {
             timeout: 5000
         });
     }
+    /*
+     * Stops the HTML5 Geolocation tracking of the user
+     * @param none
+     * @return none
+     */
     stopTrack() {
         navigator.geolocation.clearWatch(this.navId);
         this.userMarker.setMap(null);
     }
+    /**************** MAP LOADING FUNCTIONS ****************/
     /*
      * Loads Google Maps API with custom features and styling
-     * @param - None
+     * @param none
+     * @return none
      */
     loadMap() {
         this.map = new google.maps.Map(this.mapElement.nativeElement, {
