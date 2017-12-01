@@ -88,6 +88,7 @@ export class AuthProvider {
      *  @param {string} value - user's first name, {string} value - user's last name
      *  @return {firebase.promise}
      */
+
     createUser(newFirstName: string, newLastName: string) {
         let user = firebase.auth().currentUser;
         //updating the firebase default user accounts

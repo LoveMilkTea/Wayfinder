@@ -5,12 +5,20 @@ import {FIREBASE_CONFIG} from "./../../app.firebase.config";
 import * as firebase from 'firebase';
 
 @Injectable()
+
+/***************** PROVIDER CLASS ****************/
+
+/**
+ *  This class is used as a provider to establish the db and be used across the app
+ */
+
 export class FirebaseProvider {
     App: any;
     db: any;
     userInput: any;
     masterData: any;
     users: any;
+
 
   constructor(public http: Http) {
       if (!firebase.apps.length) {
