@@ -13,10 +13,9 @@ export class AdminPage {
     items: string[];
     filterValue: any;
 
-    constructor(private afAuth: AngularFireAuth, private toast: ToastController, public navCtrl: NavController, public navParams: NavParams, public database: FirebaseProvider) {
+    constructor(public navCtrl: NavController, public navParams: NavParams, public database: FirebaseProvider) {
         this.filterValue = 'showAll';
     }
-
 
     /***************** PAGE LOAD FUNCTION ****************/
 
