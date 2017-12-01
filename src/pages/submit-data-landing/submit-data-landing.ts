@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef } from '@angular/core';
+import { Component } from '@angular/core';
 import { NavController, ToastController } from 'ionic-angular';
 import { LoadingController } from 'ionic-angular';import {Http} from '@angular/http';
 import { SubmitDataPage } from "../submit-data/submit-data";
@@ -15,15 +15,26 @@ export class SubmitDataLandingPage {
     constructor(public navCtrl: NavController, public loading: LoadingController, private toast: ToastController, public http: Http) {
 
     }
+    /***************** GO TO SUBMIT DATA PAGE FUNCTION ****************/
 
-    ionViewDidLoad() {
+    /**
+     *  Directs the user to the main submit data page
+     *  @param none
+     *  @return none
+     */
 
-    }
     goMainPage(){
         this.token = ({'token': true});
         this.navCtrl.push(SubmitDataPage, this.token);
     }
 
+    /***************** GO TO BROWSE MAP PAGE FUNCTION ****************/
+
+    /**
+     *  Directs the user to a map to browse for coordinates to submit
+     *  @param none
+     *  @return none
+     */
     goMap(){
         this.navCtrl.push(SubmitDataChooseCoordsPage);
     }
