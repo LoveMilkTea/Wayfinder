@@ -32,6 +32,14 @@ export class SignupPage {
         });
     }
 
+    /***************** RESET PASSWORD FUNCTION ****************/
+
+    /**
+     *  Takes data from the user submitted form and uses the AuthData provider (../../providers/auth/auth) to create a new user account
+     *  @param none
+     *  @return none
+     */
+
     signupUser(){
         var data = {email: `${this.signupForm.value.email}`,
                     photoURL: "",
