@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, ToastController } from 'ionic-angular';
-import { AngularFireAuth } from "angularfire2/auth";
+import { IonicPage, NavController, NavParams} from 'ionic-angular';
 import {FirebaseProvider} from "../../providers/firebase/firebase";
 import {SubmitDataChooseCoordsPage} from "../submit-data-choose-coords/submit-data-choose-coords";
 
