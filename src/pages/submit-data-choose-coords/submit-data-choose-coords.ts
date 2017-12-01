@@ -16,9 +16,6 @@ declare var google;
 export class SubmitDataChooseCoordsPage {
     @ViewChild('map') mapElement: ElementRef;
     map: any;
-    App: any;
-    db: any;
-    ref: any;
     lat: any;
     long: any;
     url: any;
@@ -53,7 +50,6 @@ export class SubmitDataChooseCoordsPage {
             //icon: this.mapProvider.icons[data.type],
         });
     }
-
 
     getCoords() {
         this.url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${this.lat},${this.long}&key=AIzaSyCeP_xxvneWjyU_0EIg5slVUl3I6TtH4oA`;
@@ -107,7 +103,6 @@ export class SubmitDataChooseCoordsPage {
     }
 
     loadMap() {
-
         this.map = new google.maps.Map(this.mapElement.nativeElement, this.mapProvider.mapStyle);
         if(!this.adminCheckLat) {
             google.maps.event.addListener(this.map, 'click', (event) => {
@@ -116,6 +111,7 @@ export class SubmitDataChooseCoordsPage {
                 this.getCoords();
             });
         }
+        this.map.setZoom(17);
 
     }
     return() {

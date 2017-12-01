@@ -11,7 +11,9 @@
 
 <ion-content padding>
   <h1 *ngIf="adminCheckLat">Admin Check Coordinates</h1>
-  <button ion-button small color="blue" icon-start (click)="return()">
+  <h3 *ngIf="!adminCheckLat">Click on location to submit</h3>
+
+  <button  *ngIf="adminCheckLat" ion-button small color="blue" icon-start (click)="return()">
     OK - return
   </button>
   <div #map id="map"></div>
