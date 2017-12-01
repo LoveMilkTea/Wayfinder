@@ -10,6 +10,9 @@
 
 
 <ion-content padding>
-  <h1>Find Coordinates</h1>
+  <h1 *ngIf="adminCheckLat">Admin Check Coordinates</h1>
+  <button ion-button small color="blue" icon-start (click)="return()">
+    OK - return
+  </button>
   <div #map id="map"></div>
 </ion-content>
